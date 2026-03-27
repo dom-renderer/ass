@@ -1,0 +1,629 @@
+@extends('layouts.app-master')
+
+@push('css')
+    <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('assets/css/custom-select-style.css') }}">
+    <style>
+        .ui-widget-content {
+            border: none !important;
+            background: transparent !important;
+            color: #333333;
+        }
+
+        .frmb {
+            margin-right: 30px !important;
+        }
+
+        button.clear-all.btn.btn-danger,
+        button.get-data.btn.btn-default,
+        button.save-template.btn.btn-primary {
+            display: none !important;
+        }
+
+        /* .modal-form-wrapper > .ui-widget-content {
+        background: radial-gradient(#0000006b, #00000036)!important;
+      } */
+    </style>
+@endpush
+
+@section('content')
+    <div class="bg-light p-4 rounded">
+
+        <div class="row mt-4">
+
+            <form method="POST" action="{{ route('checklists.update', $id) }}" id="form-builder-pages">
+                @csrf @method('PUT')
+                <input type="hidden" id="json" name="form_schema" class="form-control"
+                    value="{{ json_encode($form->schema) }}" />
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name <span class="text-danger"> * </span> </label>
+                    <input type="text" name="name" class="form-control" id="name" value="{{ old('name', $form->name) }}"
+                        placeholder="Enter name" required>
+                </div>
+
+                <div class="mb-3 ptp-section @if(!$form->is_point_checklist) d-none  @endif">
+                    <label for="range4" class="form-label">Percentage to Pass</label>
+                    <input type="range" class="form-range" min="0" max="100"
+                        value="{{ is_numeric($form->ptp) ? $form->ptp : 0 }}" id="range4" name="ptp">
+                    <output for="range4" id="rangeValue" aria-hidden="true"></output>
+                </div>
+
+                <div class="mb-3">
+                    <label for=""> Remove Media </label>
+                    <select class="form-control" name="remove_media">
+                        <option value="never" @if($form->remove_media_frequency == 'never') selected @endif>Never</option>
+                        <option value="every_n_day" @if($form->remove_media_frequency == 'every_n_day') selected @endif>Every
+                            N Days</option>
+                    </select>
+                </div>
+
+                <div class="mb-3" id="every_n_day_wrapper" @if($form->remove_media_frequency_after_n_day != 'every_n_day')
+                style="display:none;" @endif>
+                    <input type="number" id="every_n_day_input" name="every_n_day_input" class="form-control d-inline-block"
+                        style="width:150px;" placeholder="Enter days" min="1"
+                        @if($form->remove_media_frequency_after_n_day == 'every_n_day')
+                        value="{{ $form->remove_media_frequency_after_n_day }}" @endif>
+                </div>
+
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <input type="checkbox" name="is_point_checklist" id="is_point_checklist" value="1"
+                                style="height:20px;width:20px;" @if($form->is_point_checklist) checked @endif>
+                            <label for="is_point_checklist" class="form-label"
+                                style="position: relative;bottom: 5px;left: 3px;"> Is point checklist </label>
+                        </div>
+                        <div class="col-3">
+                            <input type="checkbox" name="is_geofencing_enabled" id="is_geofencing_enabled" value="1"
+                                style="height:20px;width:20px;" @if($form->is_geofencing_enabled) checked @endif>
+                            <label for="is_geofencing_enabled" class="form-label"
+                                style="position: relative;bottom: 5px;left: 3px;"> Is geo-fencing enabled </label>
+                        </div>
+                        <div class="col-3">
+                            <input type="checkbox" name="is_store_checklist" id="is_store_checklist" value="1"
+                                style="height:20px;width:20px;" @if($form->is_store_checklist) checked @endif>
+                            <label for="is_store_checklist" class="form-label"
+                                style="position: relative;bottom: 5px;left: 3px;"> Is store checklist </label>
+                        </div>
+                        <div class="col-3">
+                            <input type="checkbox" name="needs_pass" id="needs_pass" value="1"
+                                style="height:20px;width:20px;" @if($form->needs_pass) checked @endif>
+                            <label for="needs_pass" class="form-label" style="position: relative;bottom: 5px;left: 3px;">
+                                Needs pass for inspection </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3" style="background: #b1b1b1df;padding: 10px;">
+                    <div class="overlay"></div>
+                    <ul id="tabs">
+                        @foreach ($form->schema as $page)
+                            <li><a href="#page-{{ $loop->iteration }}">Page {{ $loop->iteration }}</a></li>
+                        @endforeach
+
+                        <li id="add-page-tab"><a href="#new-page">+ Page</a></li>
+                    </ul>
+                    @foreach ($form->schema as $page)
+                        <div id="page-{{ $loop->iteration }}" class="fb-editor"></div>
+                    @endforeach
+                    <div id="new-page"></div>
+
+                </div>
+
+                <div class="mb-3">
+                    <input type="checkbox" name="amtosd" id="amtosd" value="1" @if(isset($form->allow_double_rescheduling) && $form->allow_double_rescheduling) checked @endif>
+                    <label for="amtosd" class="form-label"> Allow Multiple Task on Same Day </label>
+                </div>
+
+                <div class="accordion mt-2 mb-4" id="checkersAccordion">
+                    <div class="accordion-item border rounded">
+                        <h5 class="accordion-header" id="headingCheckers">
+                            <button class="accordion-button collapsed py-2 px-3 bg-light text-dark small" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapseCheckers" aria-expanded="false"
+                                aria-controls="collapseCheckers">
+                                Checkers
+                            </button>
+                        </h5>
+                        <div id="collapseCheckers" class="accordion-collapse collapse" aria-labelledby="headingCheckers"
+                            data-bs-parent="#checkersAccordion">
+                            <div class="accordion-body p-3">
+                                <div id="checkers-container">
+                                </div>
+                                <button type="button" class="btn btn-sm btn-success mt-3" id="add-checker-level"><i
+                                        class="fas fa-plus"></i> Add Checker Level</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion mt-2 mb-4" id="notificationAccordion">
+                    <div class="accordion-item border rounded">
+
+                        <h5 class="accordion-header" id="headingNotifications">
+                            <button class="accordion-button collapsed py-2 px-3 bg-light text-dark small" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapseNotifications" aria-expanded="false"
+                                aria-controls="collapseNotifications">
+                                Notifications
+                            </button>
+                        </h5>
+
+                        <div id="collapseNotifications" class="accordion-collapse collapse"
+                            aria-labelledby="headingNotifications" data-bs-parent="#notificationAccordion">
+
+                            <div class="accordion-body p-3">
+
+                                <div class="row g-3">
+
+                                    <div class="col-6">
+                                        <label for="not_1" class="form-label"> Hour before starting </label>
+                                        <select name="not_1[]" id="not_1" multiple>
+                                            @foreach($form->presetemplates()->where('type', 1)->get() as $notification)
+                                                <option value="{{ $notification->notification_template_id }}" selected>
+                                                    {{ ucwords(\App\Models\NotificationTemplate::typeOf($notification->ntemp->type)) }}
+                                                    - {{ $notification->ntemp->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label for="not_2" class="form-label"> If the inspection is not initiated half past
+                                            the starting time </label>
+                                        <select name="not_2[]" id="not_2" multiple>
+                                            @foreach($form->presetemplates()->where('type', 2)->get() as $notification)
+                                                <option value="{{ $notification->notification_template_id }}" selected>
+                                                    {{ ucwords(\App\Models\NotificationTemplate::typeOf($notification->ntemp->type)) }}
+                                                    - {{ $notification->ntemp->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label for="not_3" class="form-label"> Quarter to ending time </label>
+                                        <select name="not_3[]" id="not_3" multiple>
+                                            @foreach($form->presetemplates()->where('type', 3)->get() as $notification)
+                                                <option value="{{ $notification->notification_template_id }}" selected>
+                                                    {{ ucwords(\App\Models\NotificationTemplate::typeOf($notification->ntemp->type)) }}
+                                                    - {{ $notification->ntemp->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label for="not_4" class="form-label"> On reschedule request </label>
+                                        <select name="not_4[]" id="not_4" multiple>
+                                            @foreach($form->presetemplates()->where('type', 4)->get() as $notification)
+                                                <option value="{{ $notification->notification_template_id }}" selected>
+                                                    {{ ucwords(\App\Models\NotificationTemplate::typeOf($notification->ntemp->type)) }}
+                                                    - {{ $notification->ntemp->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label for="not_5" class="form-label"> On reschedule approval </label>
+                                        <select name="not_5[]" id="not_5" multiple>
+                                            @foreach($form->presetemplates()->where('type', 5)->get() as $notification)
+                                                <option value="{{ $notification->notification_template_id }}" selected>
+                                                    {{ ucwords(\App\Models\NotificationTemplate::typeOf($notification->ntemp->type)) }}
+                                                    - {{ $notification->ntemp->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label for="not_6" class="form-label"> On reschedule rejection </label>
+                                        <select name="not_6[]" id="not_6" multiple>
+                                            @foreach($form->presetemplates()->where('type', 6)->get() as $notification)
+                                                <option value="{{ $notification->notification_template_id }}" selected>
+                                                    {{ ucwords(\App\Models\NotificationTemplate::typeOf($notification->ntemp->type)) }}
+                                                    - {{ $notification->ntemp->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label for="not_7" class="form-label"> On submission </label>
+                                        <select name="not_7[]" id="not_7" multiple>
+                                            @foreach($form->presetemplates()->where('type', 7)->get() as $notification)
+                                                <option value="{{ $notification->notification_template_id }}" selected>
+                                                    {{ ucwords(\App\Models\NotificationTemplate::typeOf($notification->ntemp->type)) }}
+                                                    - {{ $notification->ntemp->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label for="not_8" class="form-label"> On reassignment </label>
+                                        <select name="not_8[]" id="not_8" multiple>
+                                            @foreach($form->presetemplates()->where('type', 8)->get() as $notification)
+                                                <option value="{{ $notification->notification_template_id }}" selected>
+                                                    {{ ucwords(\App\Models\NotificationTemplate::typeOf($notification->ntemp->type)) }}
+                                                    - {{ $notification->ntemp->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+                <div class="save-all-wrap">
+                    <button id="save-all" type="button" class="btn btn-primary">Save</button>
+                    <a href="{{ route('checklists.index') }}" class="btn btn-default">Back</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+@endsection
+
+@push('js')
+    <script src="{{ url('assets/form-builder/form-builder.min.js') }}"></script>
+    <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/js/form-builder-custom-fields.js') }}"></script>
+    <script type="text/javascript">
+        jQuery(($) => {
+            "use strict";
+
+            const rangeInput = document.getElementById('range4');
+            const rangeOutput = document.getElementById('rangeValue');
+
+            rangeOutput.textContent = rangeInput.value;
+
+            rangeInput.addEventListener('input', function () {
+                rangeOutput.textContent = `${this.value} %`;
+            });
+
+            $(document).on('change', '#is_point_checklist', function () {
+                if ($(this).is(':checked')) {
+                    $('.ptp-section').removeClass('d-none');
+                } else {
+                    $('.ptp-section').addClass('d-none');
+                }
+            });
+
+            $("select[name='remove_media']").on("change", function () {
+                let value = $(this).val();
+
+                if (value === "every_n_day") {
+                    $("#every_n_day_wrapper").show();
+                } else {
+                    $("#every_n_day_wrapper").hide();
+                    $("#every_n_day_input").val("");
+                }
+            });
+
+            $("#every_n_day_input").on("input", function () {
+                let num = parseInt($(this).val(), 10);
+                if (num <= 0 || isNaN(num)) {
+                    $(this).val("");
+                }
+            });
+
+            let initNotifications = (element) => {
+                $(element).select2({
+                    placeholder: 'Select Template',
+                    allowClear: true,
+                    width: '100%',
+                    theme: 'classic',
+                    ajax: {
+                        url: "{{ route('notification-template-list') }}",
+                        type: "POST",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                searchQuery: params.term,
+                                page: params.page || 1,
+                                _token: "{{ csrf_token() }}",
+                                withType: 1
+                            };
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
+
+                            return {
+                                results: $.map(data.items, function (item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                }),
+                                pagination: {
+                                    more: data.pagination.more
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    templateResult: function (data) {
+                        if (data.loading) {
+                            return data.text;
+                        }
+
+                        var $result = $('<span></span>');
+                        $result.text(data.text);
+                        return $result;
+                    }
+                });
+            }
+
+            initNotifications('#not_1');
+            initNotifications('#not_2');
+            initNotifications('#not_3');
+            initNotifications('#not_4');
+            initNotifications('#not_5');
+            initNotifications('#not_6');
+            initNotifications('#not_7');
+            initNotifications('#not_8');
+
+            var $fbPages = $(document.getElementById("form-builder-pages"));
+            var addPageTab = document.getElementById("add-page-tab");
+            var fbInstances = [];
+
+            $fbPages.tabs({
+                beforeActivate: function (event, ui) {
+                    if (ui.newPanel.selector === "#new-page") {
+                        return false;
+                    }
+                }
+            });
+
+            $fbPages.tabs("option", "active", 0);
+
+            addPageTab.addEventListener(
+                "click",
+                (click) => {
+                    const tabCount = document.getElementById("tabs").children.length;
+                    const tabId = "page-" + tabCount.toString();
+                    const $newPageTemplate = document.getElementById("new-page");
+                    const $newTabTemplate = document.getElementById("add-page-tab");
+                    const $newPage = $newPageTemplate.cloneNode(true);
+                    $newPage.setAttribute("id", tabId);
+                    $newPage.classList.add("fb-editor");
+                    const $newTab = $newTabTemplate.cloneNode(true);
+                    $newTab.removeAttribute("id");
+                    const $tabLink = $newTab.querySelector("a");
+                    $tabLink.setAttribute("href", "#" + tabId);
+                    $tabLink.innerText = "Page " + tabCount;
+
+                    $newPageTemplate.parentElement.insertBefore($newPage, $newPageTemplate);
+                    $newTabTemplate.parentElement.insertBefore($newTab, $newTabTemplate);
+                    $fbPages.tabs("refresh");
+                    $fbPages.tabs("option", "active", tabCount - 1);
+                    fbInstances.push($($newPage).formBuilder(fieldsOption));
+                },
+                false
+            );
+
+
+            @foreach ($form->schema as $key => $page)
+                fbInstances.push($("#page-{{ $loop->iteration }}").formBuilder({
+                    formData: @json($form->schema[$key]),
+                    dataType: 'json',
+                    fields: customFields,
+                    templates: customFieldsTemplates,
+                    disableFields: [],
+                    controlOrder: [
+                        "radio-group",
+                        "file",
+                        "checkbox-group",
+                        "checkbox",
+                        "hidden",
+                        "select",
+                        "number",
+                        "date",
+                        "text",
+                        "textarea",
+                        "button",
+                        "autocomplete",
+                        "paragraph",
+                        "header",
+                        "signature"
+                    ],
+                    typeUserAttrs: {
+                        signature: {
+                            value: {
+                                label: '',
+                                type: 'text',
+                                description: 'Signature'
+                            }
+                        }
+                    },
+                    i18n: {
+                        locale: 'en-US',
+                        extension: {
+                            'signature': 'Signature'
+                        }
+                    }
+                }));
+            @endforeach
+
+            let checkerLevelCount = 0;
+
+            function addCheckerRow(userId = null, userName = '') {
+                checkerLevelCount++;
+                let html = `
+                        <div class="row align-items-end mb-2 checker-row" data-level="${checkerLevelCount}">
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Level <span class="level-text">${checkerLevelCount}</span></label>
+                            </div>
+                            <div class="col-md-7">
+                                <select class="form-select checker-user-select" required>
+                                    ${userId ? `<option value="${userId}" selected>${userName}</option>` : ''}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-sm btn-danger remove-checker-row"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                $('#checkers-container').append(html);
+                initCheckerSelect2($('.checker-user-select').last());
+                reindexCheckers();
+            }
+
+            function reindexCheckers() {
+                let count = 1;
+                $('.checker-row').each(function () {
+                    $(this).attr('data-level', count);
+                    $(this).find('.level-text').text(count);
+                    count++;
+                });
+                checkerLevelCount = count - 1;
+            }
+
+            $('#add-checker-level').on('click', function () {
+                addCheckerRow();
+            });
+
+            $(document).on('click', '.remove-checker-row', function () {
+                $(this).closest('.checker-row').remove();
+                reindexCheckers();
+            });
+
+            function initCheckerSelect2(element) {
+                $(element).select2({
+                    placeholder: 'Select User',
+                    allowClear: true,
+                    width: '100%',
+                    theme: 'classic',
+                    ajax: {
+                        url: "{{ route('users-list') }}",
+                        type: "POST",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                searchQuery: params.term,
+                                page: params.page || 1,
+                                _token: "{{ csrf_token() }}",
+                                ignoreDesignation: 1
+                            };
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
+                            return {
+                                results: $.map(data.items, function (item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                }),
+                                pagination: {
+                                    more: data.pagination.more
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    templateResult: function (data) {
+                        return data.loading ? data.text : $('<span></span>').text(data.text);
+                    }
+                }).on('select2:select', function (e) {
+                    let currentVal = $(this).val();
+                    let currentSelect = $(this);
+                    let isDuplicate = false;
+
+                    $('.checker-user-select').not(currentSelect).each(function () {
+                        if ($(this).val() === currentVal && currentVal !== null) {
+                            isDuplicate = true;
+                        }
+                    });
+
+                    if (isDuplicate) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Duplicate User',
+                            text: 'This user is already assigned to a different level.',
+                        });
+                        $(this).val(null).trigger('change');
+                    }
+                });
+            }
+
+            @if(isset($form) && $form->checkers && $form->checkers->count() > 0)
+                @foreach($form->checkers as $checker)
+                    addCheckerRow("{{ $checker->user_id }}", "{{ isset($checker->user->id) ? ($checker->user->employee_id . ' - ' . $checker->user->name . ' ' . $checker->user->middle_name . ' ' . $checker->user->last_name) : '' }}");
+                @endforeach
+            @endif
+
+            $(document.getElementById("save-all")).click(function () {
+                const allData = fbInstances.map((fb) => {
+                    return fb.formData;
+                });
+
+                let checkersData = [];
+                $('.checker-user-select').each(function () {
+                    if ($(this).val()) {
+                        checkersData.push($(this).val());
+                    }
+                });
+
+                $.ajax({
+                    url: "{{ route('checklists.update', $id) }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: $('#name').val(),
+                        form_schema: allData,
+                        is_point_checklist: $('#is_point_checklist').is(':checked') ? 1 : 0,
+                        needs_pass: $('#needs_pass').is(':checked') ? 1 : 0,
+                        is_store_checklist: $('#is_store_checklist').is(':checked') ? 1 : 0,
+                        is_geofencing_enabled: $('#is_geofencing_enabled').is(':checked') ? 1 : 0,
+                        remove_media: function () {
+                            return $("select[name='remove_media']").val();
+                        },
+                        every_n_day_input: function () {
+                            return $('#every_n_day_input').val();
+                        },
+                        ptp: function () {
+                            return $('#range4').val();
+                        },
+                        _method: 'PUT',
+                        not_1: $('#not_1').val(),
+                        not_2: $('#not_2').val(),
+                        not_3: $('#not_3').val(),
+                        not_4: $('#not_4').val(),
+                        not_5: $('#not_5').val(),
+                        not_6: $('#not_6').val(),
+                        not_7: $('#not_7').val(),
+                        not_8: $('#not_8').val(),
+                        checkers: checkersData
+                    },
+                    beforeSend: function () {
+                        $('body').find('.LoaderSec').removeClass('d-none');
+                    },
+                    success: function (response) {
+                        if (response.status) {
+                            Swal.fire('Success', response.message, 'success');
+                            window.location.replace("{{ route('checklists.index') }}");
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function (response) {
+                        if ('responseJSON' in response && 'errors' in response.responseJSON) {
+                            if ('name' in response.responseJSON.errors) {
+                                if (response.responseJSON.errors.name.length > 0) {
+                                    Swal.fire('Error', response.responseJSON.errors.name[0], 'error');
+                                }
+                            }
+                        }
+                    },
+                    complete: function (response) {
+                        $('body').find('.LoaderSec').addClass('d-none');
+                    }
+                });
+
+            });
+        });
+    </script>
+@endpush

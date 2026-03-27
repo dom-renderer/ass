@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical Risk Summary - Pure CSS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --teapost-primary: rgb(6, 94, 46);
+            --teapost-primary-light: rgb(8, 120, 59);
+            --teapost-lighter: rgb(220, 237, 228);
+            --risk-critical: rgb(153, 27, 27);
+            --risk-critical-bg: rgb(254, 242, 242);
+            --risk-critical-border: rgb(252, 165, 165);
+            --risk-major: rgb(180, 83, 9);
+            --risk-major-bg: rgb(255, 247, 237);
+            --risk-major-border: rgb(253, 186, 116);
+            --risk-minor: rgb(113, 113, 122);
+            --risk-minor-bg: rgb(250, 250, 250);
+            --risk-minor-border: rgb(212, 212, 216);
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-900: #111827;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        #report-container {
+            width: 100%;
+            max-width: 1024px;
+            background: white;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            padding: 3rem;
+            min-height: 1300px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0.5rem;
+        }
+
+        /* --- HEADER --- */
+        #header {
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .store-info {
+            text-align: right;
+            line-height: 1.4;
+        }
+
+        .meta-strip {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-top: 1rem;
+        }
+
+        /* --- RISK SECTIONS --- */
+        .risk-section { margin-top: 2rem; }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .icon-box {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--teapost-lighter);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--teapost-primary);
+            font-size: 1.125rem;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* --- RISK CARDS --- */
+        .risk-card {
+            border-left: 4px solid transparent;
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 0.375rem;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .remark-box {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Color Modifiers */
+        .critical { border-color: var(--risk-critical); background: var(--risk-critical-bg); }
+        .critical .badge { background: var(--risk-critical); }
+        .critical .remark-box { border-color: var(--risk-critical-border); }
+
+        .major { border-color: var(--risk-major); background: var(--risk-major-bg); }
+        .major .badge { background: var(--risk-major); }
+        .major .remark-box { border-color: var(--risk-major-border); }
+
+        .minor { border-color: var(--risk-minor); background: var(--risk-minor-bg); }
+        .minor .badge { background: var(--risk-minor); }
+        .minor .remark-box { border-color: var(--risk-minor-border); }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media print {
+            body { padding: 0; background: white; }
+            #report-container { box-shadow: none; border: none; max-width: 100%; }
+            button { display: none; }
+            .risk-card, .icon-box, .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="report-container">
+    <header id="header">
+        <div class="header-top">
+            <div>
+                <h1 style="font-size: 1.875rem; font-weight: 800; color: var(--gray-900);">Critical Risk Summary</h1>
+                <p style="color: var(--gray-600); font-weight: 500; margin-top: 0.25rem;">Operational & Compliance Risks</p>
+            </div>
+            <div class="store-info">
+                <p style="font-weight: 700; color: var(--gray-900);">Baroda Waghodia Road</p>
+                <p style="font-size: 0.875rem; color: var(--gray-600);">Store Code: 1263</p>
+                <p style="font-size: 0.875rem; color: var(--gray-500);">Vadodara, Gujarat</p>
+            </div>
+        </div>
+        <div class="meta-strip">
+            <div><i class="fa-solid fa-calendar-day" style="margin-right: 0.5rem;"></i> 12 December 2025</div>
+            <div><i class="fa-solid fa-user-check" style="margin-right: 0.5rem;"></i> Auditor: Nikunj Patel</div>
+        </div>
+    </header>
+
+    <div class="risk-section">
+        <div class="section-title">
+            <div class="icon-box"><i class="fa-solid fa-hands-bubbles"></i></div>
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--gray-900);">Hygiene Risks</h2>
+        </div>
+        <div class="risk-grid">
+            <div class="risk-card critical">
+                <div class="card-header">
+                    <h3 style="font-size: 1rem; font-weight: 600; line-height: 1.3;">Improper food storage temperatures</h3>
+                    <span class="badge">Critical</span>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--gray-600); font-weight: 500;">Kitchen Storage</p>
+                <div class="remark-box">
+                    <p><strong>Auditor Remark:</strong> Refrigeration unit running at 10°C, significantly above required 4°C. Poses immediate safety risk.</p>
+                </div>
+            </div>
+            <div class="risk-card major">
+                <div class="card-header">
+                    <h3 style="font-size: 1rem; font-weight: 600; line-height: 1.3;">Cross-contamination risk</h3>
+                    <span class="badge">Major</span>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--gray-600); font-weight: 500;">Food Preparation</p>
+                <div class="remark-box">
+                    <p><strong>Auditor Remark:</strong> Raw meat cutting board stored next to ready-to-eat vegetable prep area without barrier.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="risk-section">
+        <div class="section-title">
+            <div class="icon-box"><i class="fa-solid fa-shield-halved"></i></div>
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--gray-900);">Safety Risks</h2>
+        </div>
+        <div class="risk-grid">
+            <div class="risk-card critical">
+                <div class="card-header">
+                    <h3 style="font-size: 1rem; font-weight: 600; line-height: 1.3;">Blocked fire exit</h3>
+                    <span class="badge">Critical</span>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--gray-600); font-weight: 500;">Back of House</p>
+                <div class="remark-box">
+                    <p><strong>Auditor Remark:</strong> Rear fire exit is obstructed by stacked inventory boxes, making it inaccessible in an emergency.</p>
+                </div>
+            </div>
+            <div class="risk-card minor">
+                <div class="card-header">
+                    <h3 style="font-size: 1rem; font-weight: 600; line-height: 1.3;">Wet floor without signage</h3>
+                    <span class="badge">Minor</span>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--gray-600); font-weight: 500;">Customer Area</p>
+                <div class="remark-box">
+                    <p><strong>Auditor Remark:</strong> A spill near the beverage station was not cleaned promptly; no 'wet floor' sign was displayed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="risk-section">
+        <div class="section-title">
+            <div class="icon-box"><i class="fa-solid fa-file-contract"></i></div>
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--gray-900);">Compliance Risks</h2>
+        </div>
+        <div class="risk-grid">
+            <div class="risk-card critical">
+                <div class="card-header">
+                    <h3 style="font-size: 1rem; font-weight: 600; line-height: 1.3;">Expired food license display</h3>
+                    <span class="badge">Critical</span>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--gray-600); font-weight: 500;">Entry</p>
+                <div class="remark-box">
+                    <p><strong>Auditor Remark:</strong> FSSAI license displayed expired two months ago. This is a severe regulatory breach.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p style="font-size: 0.875rem; color: var(--gray-500); font-weight: 500;">Page 3 of 12</p>
+        <div style="display: flex; gap: 0.75rem;">
+            <button style="padding: 0.625rem 1.25rem; background: white; border: 2px solid var(--gray-200); border-radius: 0.5rem; font-weight: 600; cursor: pointer;">Previous</button>
+            <button style="padding: 0.625rem 1.25rem; background: var(--teapost-primary); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">Next Page</button>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>
