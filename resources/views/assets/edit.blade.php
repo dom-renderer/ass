@@ -574,9 +574,9 @@
             </div>
 
             {{-- ── Submit ── --}}
-            <div class="flex items-center justify-end gap-3 pt-2">
+            <div class="flex justify-end pb-4 mt-2">
                 <button type="submit"
-                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-900 hover:bg-black text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                     <i class="bi bi-check2-circle"></i>
                     Update Asset
                 </button>
@@ -626,12 +626,12 @@
                     const fileName = fileItem.file && fileItem.file.name ? fileItem.file.name : (
                         'Document ' + (index + 1));
                     documentTitleWrap.append(`
-                        <div class="flex items-center gap-2 p-2 border border-[#e5e7eb] rounded-lg mt-2 bg-gray-50">
-                            <i class="bi bi-file-earmark-text text-gray-400"></i>
-                            <div class="text-xs text-gray-600 truncate flex-1" title="${fileName}">${fileName}</div>
-                            <input type="text" name="document_titles[]" class="h-[34px] px-3 text-sm border border-[#e5e7eb] rounded focus:outline-none focus:ring-1 focus:ring-blue-500 w-1/2" placeholder="Document title (required)" required>
-                        </div>
-                    `);
+                            <div class="flex items-center gap-2 p-2 border border-[#e5e7eb] rounded-lg mt-2 bg-gray-50">
+                                <i class="bi bi-file-earmark-text text-gray-400"></i>
+                                <div class="text-xs text-gray-600 truncate flex-1" title="${fileName}">${fileName}</div>
+                                <input type="text" name="document_titles[]" class="h-[34px] px-3 text-sm border border-[#e5e7eb] rounded focus:outline-none focus:ring-1 focus:ring-blue-500 w-1/2" placeholder="Document title (required)" required>
+                            </div>
+                        `);
                 });
             }
             pond3.on('addfile', renderDocumentTitleInputs);
@@ -808,20 +808,20 @@
 
             $('#add-asset-btn').on('click', function () {
                 let html = `
-                    <tr id="asset-row-${assetRowIndex}" class="border-b border-gray-50">
-                        <td class="p-2">
-                            <select name="assets[${assetRowIndex}][asset_id]" class="w-full" required></select>
-                        </td>
-                        <td class="p-2">
-                            <input type="text" name="assets[${assetRowIndex}][description]" class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Description (Optional)">
-                        </td>
-                        <td class="p-2 text-center">
-                            <button type="button" class="w-[38px] h-[38px] inline-flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors remove-asset-btn" data-row-id="${assetRowIndex}">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                        <tr id="asset-row-${assetRowIndex}" class="border-b border-gray-50">
+                            <td class="p-2">
+                                <select name="assets[${assetRowIndex}][asset_id]" class="w-full" required></select>
+                            </td>
+                            <td class="p-2">
+                                <input type="text" name="assets[${assetRowIndex}][description]" class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Description (Optional)">
+                            </td>
+                            <td class="p-2 text-center">
+                                <button type="button" class="w-[38px] h-[38px] inline-flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors remove-asset-btn" data-row-id="${assetRowIndex}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                 $('#assets-table tbody').append(html);
 
                 initializeAssetSelect2(assetRowIndex);

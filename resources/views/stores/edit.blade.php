@@ -277,7 +277,7 @@
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm" style="padding-bottom: 25px;">
                 <div class="flex items-start gap-3 px-6 py-1 border-b border-gray-100">
                     <div class="mt-0.5 text-blue-500">
-                        <i class="bi bi-geo-alt text-xl"></i>
+                        <i class="bi bi-geo-alt text-xl text-success"></i>
                     </div>
                     <div>
                         <h3 class="text-base font-semibold text-gray-800">Address</h3>
@@ -502,7 +502,7 @@
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm" style="padding-bottom: 25px;">
                 <div class="flex items-start gap-3 px-6 py-1 border-b border-gray-100">
                     <div class="mt-0.5 text-blue-500">
-                        <i class="bi bi-clock text-xl"></i>
+                        <i class="bi bi-clock text-xl text-warning"></i>
                     </div>
                     <div>
                         <h3 class="text-base font-semibold text-gray-800">Operating Hours</h3>

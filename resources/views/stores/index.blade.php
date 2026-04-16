@@ -16,10 +16,6 @@
     <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet" />
 
     <style type="text/css">
-        body {
-            font-family: 'DynamicAppFont', sans-serif !important;
-        }
-
         /* ── Select2 overrides to match Tailwind input height/style ── */
         .select2-container {
             width: 100% !important;
@@ -86,7 +82,7 @@
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-2xl font-semibold text-gray-800">Locations</h2>
-                <p class="text-sm text-gray-400 mt-0.5">Manage all store locations and branches</p>
+                <p class="text-sm text-gray-400 mt-0.5">Manage all locations</p>
             </div>
             <div class="flex items-center gap-3">
                 <button type="button"
