@@ -1,0 +1,290 @@
+@php
+    $sidebarLogo = !empty(optional($appConfig)->logo_url)
+        ? $appConfig->logo_url
+        : (!empty(optional($appConfig)->logo_url) ? $appConfig->logo_url : asset('assets/images/fursaa_newLogo.png'));
+    $sidebarAppName = !empty(optional($appConfig)->app_name) ? $appConfig->app_name : APP_NAME;
+@endphp
+<aside class="main-sidebar">
+    <!-- Brand Logo -->
+    <div class="logo" style="display:block;">
+        <a href="#" class="brand-link">
+            <center>
+                <img src="{{ $sidebarLogo }}" alt="{{ $sidebarAppName }}" class="img-logo" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">
+            </center>
+        </a>
+    </div>
+    <h1 class="panel-title">{{strtoupper(auth()->user()->roles[0]->name ?? '')}} PANEL</h1>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav" role="menu">
+
+                @auth
+
+                @if(auth()->user()->can('dom-dashboard') || auth()->user()->can('flagged-items-dashboard') || auth()->user()->can('monthly-report-dom-checklists'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Dashboard <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if(auth()->user()->can('dom-dashboard'))
+                            <li class="nav-item"><a href="{{ route('dom-dashboard') }}" class="nav-link"> Inspection Statistics </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('flagged-items-dashboard'))
+                            <li class="nav-item"><a href="{{ route('flagged-items-dashboard') }}" class="nav-link"> Inspection Quick Overview </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('monthly-report-dom-checklists'))
+                            <li class="nav-item"><a href="{{ route('monthly-report-dom-checklists') }}" class="nav-link"> Monthly Reports </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
+                @if(auth()->user()->can('users.index') || auth()->user()->can('roles.index'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> User Management <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if(auth()->user()->can('users.index'))
+                            <li class="nav-item"><a href="{{ route('users.index') }}" class="nav-link"> Users </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('roles.index'))
+                            <li class="nav-item"><a href="{{ route('roles.index') }}" class="nav-link"> Roles </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
+                @if(auth()->user()->can('menu_categories.view') || auth()->user()->can('menu_attributes.view') || auth()->user()->can('menu_addons.view') || auth()->user()->can('menu_products.view') || auth()->user()->can('menu_promotions.view') || auth()->user()->can('menu_orders.view'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Menu Management <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @can('menu_categories.view')
+                            <li class="nav-item"><a href="{{ route('menu.categories.index') }}" class="nav-link"> Categories </a></li>
+                        @endcan
+                        @can('menu_attributes.view')
+                            <li class="nav-item"><a href="{{ route('menu.attributes.index') }}" class="nav-link"> Attributes </a></li>
+                        @endcan
+                        @can('menu_addons.view')
+                            <li class="nav-item"><a href="{{ route('menu.addons.index') }}" class="nav-link"> Addons </a></li>
+                        @endcan
+                        @can('menu_products.view')
+                            <li class="nav-item"><a href="{{ route('menu.products.index') }}" class="nav-link"> Products </a></li>
+                        @endcan
+                        @can('menu_promotions.view')
+                            <li class="nav-item"><a href="{{ route('menu.promotions.index') }}" class="nav-link"> Promotions / Coupons </a></li>
+                        @endcan
+                        @can('menu_orders.view')
+                            <li class="nav-item"><a href="{{ route('menu.orders.index') }}" class="nav-link"> Orders </a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endif
+
+                @if(auth()->user()->can('stores.index') || auth()->user()->can('corporate-office.index') || auth()->user()->can('departments.index') || auth()->user()->can('store-types.index') || auth()->user()->can('model-types.index'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Branch Management <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if( auth()->user()->can( 'store-categories.index' ) )
+                            <li class="nav-item"><a href="{{ route( 'store-categories.index' ) }}" class="nav-link">Locations Categories</a></li>
+                        @endif
+
+                        @if(auth()->user()->can('store-types.index'))
+                            <li class="nav-item"><a href="{{ route('store-types.index') }}" class="nav-link"> Locations Types </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('model-types.index'))
+                            <li class="nav-item"><a href="{{ route('model-types.index') }}" class="nav-link"> Locations Model Types </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('stores.index'))
+                            <li class="nav-item"><a href="{{ route('stores.index') }}" class="nav-link"> Locations </a></li>
+                        @endif
+        
+                        @if(auth()->user()->can('corporate-office.index'))
+                            <li class="nav-item"><a href="{{ route('corporate-office.index') }}" class="nav-link"> Corporate Offices </a></li>
+                        @endif
+        
+                        @if(auth()->user()->can('departments.index'))
+                            <li class="nav-item"><a href="{{ route('departments.index') }}" class="nav-link"> Departments </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
+                @if(auth()->user()->can('assets.index') || auth()->user()->can('assets-types.index') || auth()->user()->can('assets-makes.index') || auth()->user()->can('assets-categories.index'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Assets Management <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if( auth()->user()->can( 'assets-makes.index' ) )
+                            <li class="nav-item"><a href="{{ route( 'assets-makes.index' ) }}" class="nav-link">Assets Make</a></li>
+                        @endif
+
+                        @if(auth()->user()->can('assets-types.index'))
+                            <li class="nav-item"><a href="{{ route('assets-types.index') }}" class="nav-link"> Assets Model </a></li>
+                        @endif
+
+                        @if( auth()->user()->can( 'assets-categories.index' ) )
+                            <li class="nav-item"><a href="{{ route( 'assets-categories.index' ) }}" class="nav-link">Assets Category</a></li>
+                        @endif
+
+                        @if( auth()->user()->can( 'asset-statuses.index' ) )
+                            <li class="nav-item"><a href="{{ route( 'asset-statuses.index' ) }}" class="nav-link">Asset Status</a></li>
+                        @endif
+
+                        @if(auth()->user()->can('assets.index'))
+                            <li class="nav-item"><a href="{{ route('assets.index') }}" class="nav-link"> Assets </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
+                @if(auth()->user()->can('checklists.index') || auth()->user()->can('checklist-scheduling.index') || auth()->user()->can('scheduled-tasks.index') || auth()->user()->can('pass-verifications.index') || auth()->user()->can('reschedules') || auth()->user()->can('tat-overview.index'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Checklist Management <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if(auth()->user()->can('checklists.index'))
+                            <li class="nav-item"><a href="{{ route('checklists.index') }}" class="nav-link"> Checklists Templates </a></li>
+                        @endif
+        
+                        @if(auth()->user()->can('scheduled-tasks.index'))
+                            <li class="nav-item"><a href="{{ route('scheduled-tasks.index') }}" class="nav-link"> Scheduled Tasks </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('pass-verifications.index'))
+                            <li class="nav-item"><a href="{{ route('pass-verifications.index') }}" class="nav-link"> Pass Verifications </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('tat-overview.index'))
+                            <li class="nav-item"><a href="{{ route('tat-overview.index') }}" class="nav-link"> TAT Overview </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('reschedules'))
+                            <li class="nav-item"><a href="{{ route('reschedules') }}" class="nav-link"> Rescheduled Tasks </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
+                @if(auth()->user()->can('ticket-management.index') || auth()->user()->can('particulars.index') || auth()->user()->can('issues.index') || auth()->user()->can('ticket-escalations.index'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Ticket System <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if(auth()->user()->can('particulars.index'))
+                            <li class="nav-item"><a href="{{ route('particulars.index') }}" class="nav-link"> Particulars </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('issues.index'))
+                            <li class="nav-item"><a href="{{ route('issues.index') }}" class="nav-link"> Issues </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('ticket-management.index'))
+                            <li class="nav-item"><a href="{{ route('ticket-management.index') }}" class="nav-link"> Tickets </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('ticket-escalations.index'))
+                            <li class="nav-item"><a href="{{ route('ticket-escalations.index') }}" class="nav-link"> Escalations </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif               
+
+                @if(auth()->user()->can('workflow-checklists.index') || auth()->user()->can('workflow-templates.index') || auth()->user()->can('workflow-assignments.index'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Project Management <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if(auth()->user()->can('workflow-checklists.index'))
+                            <li class="nav-item"><a href="{{ route('workflow-checklists.index') }}" class="nav-link"> Checklists </a></li>
+                        @endif
+                        @if(auth()->user()->can('workflow-templates.index'))
+                            <li class="nav-item"><a href="{{ route('workflow-templates.index') }}" class="nav-link"> Templates </a></li>
+                        @endif
+                        @if(auth()->user()->can('workflow-assignments.index'))
+                            <li class="nav-item"><a href="{{ route('workflow-assignments.index') }}" class="nav-link"> Assignments </a></li>
+                        @endif
+                        @if(auth()->user()->can('workflow-tasks.index'))
+                            <li class="nav-item"><a href="{{ route('workflow-tasks.index') }}" class="nav-link"> Tasks </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
+
+                @if(auth()->user()->can('topics.index') || auth()->user()->can('contents.index') || auth()->user()->can('content-analytics'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Learning Management <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if(auth()->user()->can('topics.index'))
+                            <li class="nav-item"><a href="{{ route('topics.index') }}" class="nav-link"> Categories </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('contents.index'))
+                            <li class="nav-item"><a href="{{ route('contents.index') }}" class="nav-link"> Content </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('content-analytics'))
+                            <li class="nav-item"><a href="{{ route('content-analytics') }}" class="nav-link"> View Analytics </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
+                @if( auth()->user()->can('documents.index') || auth()->user()->can('document-upload.index') )
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Document Management<i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if( auth()->user()->can( 'document-dashboard' ) )
+                            <li class="nav-item"><a href="{{ route( 'document-dashboard' ) }}" class="nav-link">Dashboard</a></li>
+                        @endif
+
+                        @if( auth()->user()->can( 'documents.index' ) )
+                            <li class="nav-item"><a href="{{ route( 'documents.index' ) }}" class="nav-link">Document Type</a></li>
+                        @endif
+
+                        @if( auth()->user()->can( 'document-upload.index' ) )
+                            <li class="nav-item"><a href="{{ route( 'document-upload.index' ) }}" class="nav-link">Document List</a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif            
+
+                @if(auth()->user()->can('notification-templates.index') || auth()->user()->can('imported-schedulings-history') || auth()->user()->can('settings.edit') || auth()->user()->can('notification-center'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link"> Settings <i class="bi bi-chevron-down"></i></a>
+                    <ul class="nav nav-dropdown">
+                        @if(auth()->user()->can('notification-templates.index'))
+                            <li class="nav-item"><a href="{{ route('notification-templates.index') }}" class="nav-link"> Notification Templates </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('imported-schedulings-history'))
+                            <li class="nav-item"><a href="{{ route('imported-schedulings-history') }}" class="nav-link"> XLSX Import History </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('settings.edit'))
+                            <li class="nav-item"><a href="{{ route('settings.edit') }}" class="nav-link"> Settings </a></li>
+                        @endif
+
+                        @if(auth()->user()->can('notification-center'))
+                            <li class="nav-item"><a href="{{ route('notification-center') }}" class="nav-link"> Notifications </a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
+                <li class="nav-item">
+                    <ul class="nav nav-dropdown">
+                        <li class="nav-item"><a href="{{ route('logout') }}" class="nav-link">Logout</a></li>
+                    </ul>
+                </li>
+                @endauth
+
+            </ul>
+        </nav>
+        
+        <div class="version"><img src="{!! url('assets/images/version.svg') !!}"> VERSION 1.0.0</div>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

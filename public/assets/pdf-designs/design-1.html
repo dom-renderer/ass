@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Tea Post Inspection Report - {{ $task->code ?? '-' }} </title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+        .header {
+            background-color: #174C3C;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            position: relative;
+            height: 32px;
+        }
+        .header img {
+            width: 50px;
+            height: auto;
+            position: absolute;
+            left: 20px;
+            top: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 15px;
+            float: right;
+            position: relative;
+            bottom: 23px;
+        }
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .summary div {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            margin-top: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #174C3C;
+            color: white;
+            text-transform: uppercase;
+        }
+        .pass {
+            background-color: #c8e6c9;
+        }
+        .fail {
+            background-color: #ffccbc;
+        }
+        .bolder {
+            font-weight: bold;
+        }
+
+        /* Page 1-3 Styles */
+        .new-page {
+            page-break-before: always;
+        }
+        .teapost-primary { color: rgb(6, 94, 46); }
+        .teapost-primary-bg { background-color: rgb(6, 94, 46); }
+        .failure-color { color: rgb(185, 28, 28); }
+        .failure-bg { background-color: rgb(254, 242, 242); }
+        .failure-border { border-color: rgb(252, 165, 165); }
+        .warning-color { color: rgb(217, 119, 6); }
+        .warning-bg { background-color: rgb(254, 252, 232); }
+        .warning-border { border-color: rgb(253, 224, 71); }
+        
+        .report-container {
+            width: 100%;
+            background-color: white;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        .report-header {
+            border-bottom: 2px solid #e5e5e5;
+            margin-bottom: 30px;
+        }
+        .report-header-flex {
+            display: table;
+            width: 100%;
+        }
+        .report-header-left {
+            display: table-cell;
+            vertical-align: top;
+        }
+        .report-header-right {
+            display: table-cell;
+            text-align: right;
+            vertical-align: top;
+            background-color: #f9fafb;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+        }
+        .audit-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: rgb(6, 94, 46);
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .report-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 8px 0;
+        }
+        .report-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0;
+        }
+        .store-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 8px 0;
+        }
+        .store-info {
+            font-size: 12px;
+            color: #4b5563;
+            margin: 4px 0;
+        }
+        .meta-row {
+            display: table;
+            width: 100%;
+            padding-top: 15px;
+        }
+        .meta-item {
+            display: table-cell;
+            background-color: #f9fafb;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #4b5563;
+        }
+        .meta-item-right {
+            text-align: right;
+        }
+
+        /* Score Panel */
+        .summary-grid {
+            display: table;
+            width: 100%;
+            margin-top: 30px;
+        }
+        .score-panel {
+            display: table-cell;
+            width: 35%;
+            vertical-align: top;
+            text-align: center;
+            background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
+            border-radius: 12px;
+            padding: 30px;
+            border: 2px solid #e5e5e5;
+        }
+        .score-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #4b5563;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 10px solid #e5e5e5;
+            margin: 0 auto 20px;
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #111827;
+        }
+        .score-percent {
+            font-size: 20px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .status-fail {
+            background-color: rgb(254, 242, 242);
+            color: rgb(185, 28, 28);
+            border: 2px solid rgb(252, 165, 165);
+        }
+        .status-pass {
+            background-color: rgb(220, 252, 231);
+            color: rgb(6, 94, 46);
+            border: 2px solid rgb(134, 239, 172);
+        }
+
+        /* KPI Panel */
+        .kpi-panel {
+            display: table-cell;
+            width: 65%;
+            vertical-align: top;
+            padding-left: 30px;
+        }
+        .kpi-grid {
+            display: table;
+            width: 100%;
+        }
+        .kpi-row {
+            display: table-row;
+        }
+        .kpi-card {
+            display: table-cell;
+            width: 50%;
+            padding: 5px;
+            vertical-align: top;
+        }
+        .kpi-card-inner {
+            background-color: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .kpi-card-green {
+            border-color: rgb(6, 94, 46);
+        }
+        .kpi-card-red {
+            border-color: rgb(252, 165, 165);
+        }
+        .kpi-card-orange {
+            border-color: rgb(253, 224, 71);
+        }
+        .kpi-icon-row {
+            margin-bottom: 10px;
+        }
+        .kpi-icon {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            text-align: center;
+            line-height: 36px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .kpi-icon-gray { background-color: #f3f4f6; color: #4b5563; }
+        .kpi-icon-green { background-color: rgb(220, 252, 231); color: rgb(6, 94, 46); }
+        .kpi-icon-red { background-color: rgb(254, 242, 242); color: rgb(185, 28, 28); }
+        .kpi-icon-orange { background-color: rgb(254, 252, 232); color: rgb(217, 119, 6); }
+        .kpi-label {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            vertical-align: middle;
+        }
+        .kpi-label-green { color: rgb(6, 94, 46); }
+        .kpi-label-red { color: rgb(185, 28, 28); }
+        .kpi-label-orange { color: rgb(217, 119, 6); }
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .kpi-value-gray { color: #111827; }
+        .kpi-value-green { color: rgb(6, 94, 46); }
+        .kpi-value-red { color: rgb(185, 28, 28); }
+        .kpi-value-orange { color: rgb(217, 119, 6); }
+
+        /* Insights Block */
+        .insights-block {
+            margin-top: 20px;
+            background-color: rgb(255, 251, 235);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid rgb(217, 119, 6);
+        }
+        .insights-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 8px 0;
+        }
+        .insights-text {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Report Footer */
+        .report-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e5e5;
+            display: table;
+            width: 100%;
+        }
+        .footer-left {
+            display: table-cell;
+            font-size: 11px;
+            color: #6b7280;
+        }
+        .footer-right {
+            display: table-cell;
+            text-align: right;
+        }
+
+        /* Page 2 Styles - Horizontal Bar Chart */
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0;
+        }
+        .chart-legend {
+            font-size: 11px;
+            color: #525252;
+        }
+        .legend-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .legend-critical { background-color: rgb(153, 27, 27); }
+        .legend-warning { background-color: rgb(180, 83, 9); }
+        .legend-pass { background-color: rgb(6, 94, 46); }
+        
+        .bar-chart-container {
+            margin-top: 25px;
+        }
+        .bar-row {
+            display: table;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        .bar-label {
+            display: table-cell;
+            width: 25%;
+            text-align: right;
+            padding-right: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #262626;
+            vertical-align: middle;
+        }
+        .bar-container {
+            display: table-cell;
+            width: 75%;
+            vertical-align: middle;
+        }
+        .bar-bg {
+            width: 100%;
+            height: 36px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 36px;
+            border-radius: 4px;
+            text-align: right;
+            padding-right: 12px;
+            line-height: 36px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+        .bar-critical { background-color: rgb(153, 27, 27); }
+        .bar-warning { background-color: rgb(180, 83, 9); }
+        .bar-pass { background-color: rgb(6, 94, 46); }
+
+        .priority-block {
+            margin-top: 30px;
+            background: linear-gradient(to right, rgb(254, 226, 226), white);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid rgb(153, 27, 27);
+        }
+        .priority-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 10px 0;
+        }
+        .priority-text {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Page 3 Styles - Risk Summary */
+        .risk-section {
+            margin-bottom: 25px;
+        }
+        .risk-header {
+            display: table;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .risk-icon-cell {
+            display: table-cell;
+            width: 40px;
+            vertical-align: middle;
+        }
+        .risk-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background-color: rgb(220, 237, 228);
+            text-align: center;
+            line-height: 36px;
+            color: rgb(6, 94, 46);
+            font-weight: bold;
+        }
+        .risk-title-cell {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 12px;
+        }
+        .risk-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+        .risk-grid {
+            display: table;
+            width: 100%;
+        }
+        .risk-card {
+            display: table-cell;
+            width: 50%;
+            padding: 5px;
+            vertical-align: top;
+        }
+        .risk-card-inner {
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        .risk-card-critical {
+            border-left: 4px solid rgb(153, 27, 27);
+            background-color: rgb(254, 242, 242);
+        }
+        .risk-card-major {
+            border-left: 4px solid rgb(180, 83, 9);
+            background-color: rgb(255, 247, 237);
+        }
+        .risk-card-minor {
+            border-left: 4px solid rgb(113, 113, 122);
+            background-color: rgb(250, 250, 250);
+        }
+        .risk-card-header {
+            display: table;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .risk-card-title {
+            display: table-cell;
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+            vertical-align: top;
+        }
+        .risk-badge-cell {
+            display: table-cell;
+            text-align: right;
+            vertical-align: top;
+        }
+        .risk-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: white;
+        }
+        .risk-badge-critical { background-color: rgb(153, 27, 27); }
+        .risk-badge-major { background-color: rgb(180, 83, 9); }
+        .risk-badge-minor { background-color: rgb(113, 113, 122); }
+        .risk-location {
+            font-size: 12px;
+            color: #4b5563;
+            font-weight: 500;
+            margin: 4px 0 0 0;
+        }
+        .risk-remark {
+            margin-top: 12px;
+            padding-top: 12px;
+            font-size: 12px;
+            color: #374151;
+            line-height: 1.5;
+        }
+        .risk-remark-critical { border-top: 1px solid rgb(252, 165, 165); }
+        .risk-remark-major { border-top: 1px solid rgb(253, 186, 116); }
+        .risk-remark-minor { border-top: 1px solid rgb(212, 212, 216); }
+        .remark-label {
+            font-weight: 600;
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body>
+    {{-- ==================== PAGE 1: EXECUTIVE SUMMARY ==================== --}}
+    @php
+        // Calculate summary data for page 1-3
+        $storeName = $task->parent->actstore->name ?? 'N/A';
+        $storeCode = $task->parent->actstore->code ?? 'N/A';
+        $storeLocation = ($task->parent->actstore->city ?? '') . ', ' . ($task->parent->actstore->state ?? '');
+        
+        $auditDate = \Carbon\Carbon::parse($task->started_at)->format('d F Y');
+        $auditorName = ($task->parent->user->name ?? 'N/A') . ' ' . ($task->parent->user->middle_name ?? 'N/A') . ' ' . ($task->parent->user->last_name ?? 'N/A');
+        $checklistName = $task->parent->parent->checklist->name ?? 'Inspection Report';
+        
+        // Get percentage and result
+        $overallPercentage = $finalResultData['percentage'] ?? 0;
+        if (is_string($overallPercentage)) {
+            $overallPercentage = floatval(str_replace('%', '', $overallPercentage));
+        }
+        $overallResult = $finalResultData['final_result'] ?? 'N/A';
+        
+        $totalChecks = $toBeCounted ?? 0;
+        $passedChecks = $finalResultData['passed'] ?? 0;
+        $failedChecks = $finalResultData['failed'] ?? 0;
+        $naChecks = $finalResultData['na'] ?? 0;
+        
+        // Calculate critical failures (items with specific critical markers or just failed items)
+        $criticalFailures = 0;
+        if (isset($data) && is_array($data)) {
+            foreach ($data as $row) {
+                if (isset($row[1]) && is_string($row[1]) && (strtolower($row[1]) == 'no' || strtolower($row[1]) == 'fail')) {
+                    $criticalFailures++;
+                }
+            }
+        }
+        
+        // Prepare section-wise data
+        $sectionWiseData = [];
+        $hasSectionWisePages = collect($task->data ?? [])->groupBy('page')->values()->toArray();
+        $versionedFormData = \App\Helpers\Helper::getVersionForm($task->version_id);
+        
+        if (count($hasSectionWisePages) > 0) {
+            foreach ($hasSectionWisePages as $pKey => $totalSectionsRow) {
+                if (!($pKey == 0 || $pKey == 1)) {
+                    $thisVarients = \App\Helpers\Helper::categorizePoints($totalSectionsRow ?? []);
+                    $thisTotal = count(\App\Helpers\Helper::selectPointsQuestions($totalSectionsRow));
+                    $thisToBeCounted = $thisTotal - count($thisVarients['na']);
+                    
+                    $thisFailed = abs(count(array_column($thisVarients['negative'], 'value')));
+                    $thisAchieved = $thisToBeCounted - abs($thisFailed);
+                    
+                    if ($thisFailed <= 0) {
+                        $thisAchieved = array_sum(array_column($thisVarients['positive'], 'value'));
+                    }
+                    
+                    if ($thisToBeCounted > 0) {
+                        $thisPer = number_format(($thisAchieved / $thisToBeCounted) * 100, 2);
+                    } else {
+                        $thisPer = 0;
+                    }
+                    
+                    $titleOfSection = 'Section ' . ($pKey + 1);
+                    if (is_array($versionedFormData) && isset($versionedFormData[$pKey])) {
+                        $titleOfSection = collect($versionedFormData[$pKey])->where('type', 'header')->get(0)->label ?? ('Section ' . ($pKey + 1));
+                    }
+                    
+                    $sectionWiseData[] = [
+                        'title' => html_entity_decode($titleOfSection),
+                        'percentage' => floatval($thisPer),
+                    ];
+                }
+            }
+        }
+        
+        // Sort sections by percentage for display
+        usort($sectionWiseData, function($a, $b) {
+            return $a['percentage'] <=> $b['percentage'];
+        });
+        
+        // Find lowest scoring sections for insights
+        $lowestSections = array_slice($sectionWiseData, 0, 3);
+        $lowestSectionNames = array_map(function($s) { return $s['title']; }, $lowestSections);
+    @endphp
+
+    <div class="report-container">
+        <div class="report-header">
+            <div class="report-header-flex">
+                <div class="report-header-left">
+                    <span class="audit-badge">Audit Report</span>
+                    <h1 class="report-title">Executive Summary</h1>
+                    <p class="report-subtitle">{{ $checklistName }}</p>
+                </div>
+                <div class="report-header-right">
+                    <p class="store-name">{{ $storeName }}</p>
+                    <p class="store-info"><strong>Store Code:</strong> {{ $storeCode }}</p>
+                    <p class="store-info"><strong>Location:</strong> {{ $storeLocation }}</p>
+                </div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-item">
+                    <strong>Audit Date:</strong> <span style="color: #111827; font-weight: 600;">{{ $auditDate }}</span>
+                </div>
+                <div class="meta-item meta-item-right">
+                    <strong>Auditor:</strong> <span style="color: #111827; font-weight: 600;">{{ $auditorName }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-grid">
+            <div class="score-panel">
+                <p class="score-title">Overall Compliance Score</p>
+                <div style="width: 140px!important; height: 140px!important; border: 10px solid {{ $overallResult == 'Pass' ? 'rgb(134, 239, 172)' : 'rgb(252, 165, 165)' }}; border-radius: 50%; margin: 0 auto 20px;display:flex;flex-direction:row;align-items:center;justify-content:center;">
+                    <span class="score-value">{{ number_format($overallPercentage, 0) }}</span>
+                    <span class="score-percent">%</span>
+                </div>
+                <span class="status-badge {{ $overallResult == 'Pass' ? 'status-pass' : 'status-fail' }}">
+                    Status: {{ $overallResult }}
+                </span>
+            </div>
+
+            <div class="kpi-panel">
+                <table style="width: 100%; border-collapse: separate; border-spacing: 10px; margin: 0; box-shadow: none;">
+                    <tr>
+                        <td style="border: 2px solid #e5e5e5; border-radius: 12px; padding: 20px; background: white; vertical-align: top;">
+                            <div class="kpi-icon-row">
+                                <span class="kpi-icon kpi-icon-gray">✓</span>
+                                <span class="kpi-label">Total Checks</span>
+                            </div>
+                            <p class="kpi-value kpi-value-gray">{{ $totalChecks }}</p>
+                        </td>
+                        <td style="border: 2px solid rgb(6, 94, 46); border-radius: 12px; padding: 20px; background: white; vertical-align: top;">
+                            <div class="kpi-icon-row">
+                                <span class="kpi-icon kpi-icon-green">✓</span>
+                                <span class="kpi-label kpi-label-green">Passed</span>
+                            </div>
+                            <p class="kpi-value kpi-value-green">{{ $passedChecks }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 2px solid rgb(252, 165, 165); border-radius: 12px; padding: 20px; background: white; vertical-align: top;">
+                            <div class="kpi-icon-row">
+                                <span class="kpi-icon kpi-icon-red">✗</span>
+                                <span class="kpi-label kpi-label-red">Failed</span>
+                            </div>
+                            <p class="kpi-value kpi-value-red">{{ $failedChecks }}</p>
+                        </td>
+                        <td style="border: 2px solid rgb(253, 224, 71); border-radius: 12px; padding: 20px; background: white; vertical-align: top;">
+                            <div class="kpi-icon-row">
+                                <span class="kpi-icon kpi-icon-orange">!</span>
+                                <span class="kpi-label kpi-label-orange">N/A</span>
+                            </div>
+                            <p class="kpi-value kpi-value-orange">{{ $naChecks }}</p>
+                        </td>
+                    </tr>
+                </table>
+
+                @if(count($lowestSectionNames) > 0)
+                @endif
+            </div>
+        </div>
+
+        <div class="report-footer">
+            <div class="footer-left">
+                <p style="margin: 0;">Generated on {{ now()->format('d M Y') }} at {{ now()->format('H:i') }} IST</p>
+                <p style="margin: 4px 0 0 0;">Report ID: {{ $task->code ?? 'N/A' }}</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- ==================== PAGE 2: SECTION-WISE PERFORMANCE ==================== --}}
+    @if(count($sectionWiseData) > 0)
+    <div class="new-page"></div>
+    <div class="report-container">
+        <div class="report-header">
+            <div class="report-header-flex">
+                <div class="report-header-left">
+                    <div style="display: table;">
+                        <div style="display: table-cell; width: 4px; background-color: rgb(6, 94, 46); border-radius: 2px;"></div>
+                        <div style="display: table-cell; padding-left: 12px;">
+                            <h1 style="font-size: 24px; font-weight: 600; color: #171717; margin: 0;">Section-wise Performance</h1>
+                            <p style="font-size: 12px; color: #737373; margin: 4px 0 0 0;">Audit Compliance Report</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="report-header-right">
+                    <p class="store-name">{{ $storeName }}</p>
+                    <p class="store-info"><strong>Store Code:</strong> {{ $storeCode }}</p>
+                    <p class="store-info"><strong>Location:</strong> {{ $storeLocation }}</p>
+                </div>
+            </div>
+            <div class="meta-row" style="background-color: #fafafa; padding: 10px 15px; border-radius: 6px;">
+                <div class="meta-item" style="background: transparent;">
+                    <strong>Audit Date:</strong> <span style="color: #262626;">{{ $auditDate }}</span>
+                </div>
+                <div class="meta-item meta-item-right" style="background: transparent;">
+                    <strong>Auditor:</strong> <span style="color: #262626;">{{ $auditorName }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <div style="display: table; width: 100%; margin-bottom: 25px;">
+                <div style="display: table-cell;">
+                    <h2 class="section-title">Performance by Section</h2>
+                </div>
+                <div style="display: table-cell; text-align: right;" class="chart-legend">
+                    <span class="legend-dot legend-critical"></span> Critical (&lt;60%)
+                    &nbsp;&nbsp;
+                    <span class="legend-dot legend-warning"></span> Warning (60-79%)
+                    &nbsp;&nbsp;
+                    <span class="legend-dot legend-pass"></span> Pass (≥80%)
+                </div>
+            </div>
+
+            <div class="bar-chart-container">
+                @foreach($sectionWiseData as $section)
+                    @php
+                        $barClass = 'bar-pass';
+                        if ($section['percentage'] < 60) {
+                            $barClass = 'bar-critical';
+                        } elseif ($section['percentage'] < 80) {
+                            $barClass = 'bar-warning';
+                        }
+                    @endphp
+                    <div class="bar-row">
+                        <div class="bar-label">{{ $section['title'] }}</div>
+                        <div class="bar-container">
+                            <div class="bar-bg">
+                                <div class="bar-fill {{ $barClass }}" style="width: {{ $section['percentage'] }}%;">
+                                    {{ number_format($section['percentage'], 2) }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @if(count($lowestSections) > 0)
+            <div class="priority-block">
+                <h3 class="priority-title">Priority Focus Areas</h3>
+                <p class="priority-text">
+                    The lowest scores are in 
+                    @foreach($lowestSections as $idx => $section)
+                        <strong style="color: rgb(220, 38, 38);">{{ $section['title'] }} ({{ number_format($section['percentage'], 2) }}%)</strong>@if($idx < count($lowestSections) - 1), @endif
+                    @endforeach.
+                    These sections represent the most critical compliance gaps and require immediate corrective action.
+                </p>
+            </div>
+            @endif
+        </div>
+    </div>
+    @endif
+
+    {{-- ==================== PAGE 3: CRITICAL RISK SUMMARY ==================== --}}
+    @php
+        // Prepare failed items grouped by category for risk summary
+        $failedItems = [];
+        if (isset($data) && is_array($data)) {
+            foreach ($data as $row) {
+                if (isset($row[1]) && is_string($row[1]) && (strtolower($row[1]) == 'no' || strtolower($row[1]) == 'fail')) {
+                    $failedItems[] = [
+                        'title' => $row[0] ?? 'Unknown Item',
+                        'remark' => $row[2] ?? 'No remark provided',
+                    ];
+                }
+            }
+        }
+    @endphp
+    
+    @if(count($failedItems) > 0)
+    <div class="new-page"></div>
+    <div class="report-container">
+        <div class="report-header">
+            <div class="report-header-flex">
+                <div class="report-header-left">
+                    <h1 style="font-size: 24px; font-weight: 700; color: #171717; margin: 0;">Critical Risk Summary</h1>
+                    <p style="font-size: 13px; color: #525252; margin: 4px 0 0 0;">Operational & Compliance Risks</p>
+                </div>
+                <div class="report-header-right">
+                    <p class="store-name">{{ $storeName }}</p>
+                    <p class="store-info"><strong>Store Code:</strong> {{ $storeCode }}</p>
+                    <p class="store-info"><strong>Location:</strong> {{ $storeLocation }}</p>
+                </div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-item" style="background: transparent;">
+                    <strong>{{ $auditDate }}</strong>
+                </div>
+                <div class="meta-item meta-item-right" style="background: transparent;">
+                    <strong>Auditor:</strong> {{ $auditorName }}
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 25px;">
+            <div class="risk-section">
+                <div class="risk-header">
+                    <div class="risk-icon-cell">
+                        <div class="risk-icon">!</div>
+                    </div>
+                    <div class="risk-title-cell">
+                        <h2 class="risk-section-title">Failed Items Requiring Attention</h2>
+                    </div>
+                </div>
+                
+                @foreach(array_chunk($failedItems, 2) as $rowItems)
+                <div class="risk-grid" style="margin-bottom: 10px;">
+                    @foreach($rowItems as $item)
+                    <div class="risk-card">
+                        <div class="risk-card-inner risk-card-critical">
+                            <div class="risk-card-header">
+                                <div class="risk-card-title">{{ is_array($item['title']) ? implode(', ', $item['title']) : $item['title'] }}</div>
+                                <div class="risk-badge-cell">
+                                    <span class="risk-badge risk-badge-critical">Failed</span>
+                                </div>
+                            </div>
+                            @if(!empty($item['remark']) && !is_array($item['remark']))
+                            <div class="risk-remark risk-remark-critical">
+                                <span class="remark-label">Auditor Remark:</span> {{ $item['remark'] }}
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                    @if(count($rowItems) == 1)
+                    <div class="risk-card"></div>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- ==================== ORIGINAL PDF CONTENT STARTS HERE ==================== --}}
+    <div class="new-page"></div>
+    <div class="header">
+        <img src="{{ public_path('assets/logo.webp') }}" alt="Tea Post Logo">
+        <h1> {{ $task->parent->parent->checklist->name ?? '' }} </h1>
+        <p> {{ $task->code }} </p>
+    </div>
+    
+    @php
+    $date1 = \Carbon\Carbon::parse($task->started_at);
+    $date2 = \Carbon\Carbon::parse($task->completion_date);
+    $diff = $date1->diff($date2);
+
+    $versionedForm = \App\Helpers\Helper::getVersionForm($task->version_id);
+    $isPointChecklist = \App\Helpers\Helper::isPointChecklist($versionedForm);
+    @endphp
+
+
+    <table style="margin-top:5px!important;">
+        <tbody>
+            <tr class="pass">
+                <td> 
+                    <center>
+                        <strong>
+                            {{ $task->parent->actstore->name ?? '' }} - {{ $task->parent->actstore->code ?? '' }}
+                        </strong>
+                    </center>    
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table style="margin-top:5px!important;">
+        <tbody>
+            <tr class="pass">
+                <td> <span class="bolder"> Start Time </span>: {{ $date1->format('d F Y H:i') }} </td>
+                <td>  <span class="bolder"> End Time </span> : {{ $task->status == 1 ? '-' : $date2->format('d F Y H:i') }} </td>
+                <td> <span class="bolder"> Ops Time: </span> 
+                    @if($task->status == 1)
+                        -
+                    @else
+                        @if($diff->d > 0)
+                        {{ $diff->d }} days,
+                        @endif
+                        @if($diff->h > 0)
+                        {{ $diff->h }} hours,
+                        @endif
+                        @if($diff->i > 0)
+                        {{ $diff->i }} minutes
+                        @endif
+                        @if($diff->d <= 0 && $diff->h <= 0 && $diff->i <= 0)
+                            -
+                        @endif
+                    @endif
+                   </td>
+            </tr>
+            <tr class="pass">
+                <td colspan="2"> <span class="bolder"> Conducted By: </span> {{ $task->parent->user->name ?? '' }} </td>
+                <td> <span class="bolder"> Total Questions: </span> {{ $toBeCounted }} </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table style="margin-top:5px!important;">
+        <tbody>
+
+            @if($isPointChecklist)
+            <tr class="pass">
+                <td> <span class="bolder"> Pass </span> </td>
+                <td> {{ $finalResultData['passed'] }} </td>
+            </tr>
+            <tr class="pass">
+                <td>  <span class="bolder"> N/A </span>  </td>
+                <td> {{ $finalResultData['na'] }} </td>
+            </tr>
+            <tr class="pass">
+                <td>  <span class="bolder"> Fail </span> </td>
+                <td> {{ $finalResultData['failed'] }} </td>
+            </tr>
+            <tr class="pass">
+                <td>  <span class="bolder"> Percentage </span>  </td>
+                <td> {{ $finalResultData['percentage'] }} </td>
+            </tr>
+            <tr @if($finalResultData['final_result'] == 'Pass') class="pass" @else class="fail" @endif>
+                <td>  <span class="bolder"> Result </span>  </td>
+                <td> {{ $finalResultData['final_result'] }} </td>
+            </tr>
+            @endif
+        </tbody>
+    </table>
+
+    @php
+        if (empty($data)) {
+            $maxColumns = 3;
+        } else {
+            $maxColumns = max(array_map('count', $data));
+        }
+    @endphp
+
+    {{-- FAILED ITEMS --}}
+
+    <br>
+    @if(isset($task->parent->parent->checklist->is_point_checklist) && $task->parent->parent->checklist->is_point_checklist == 1)
+
+    @php
+        $hasSectionWise = collect($task->data ?? [])->groupBy('page')->values()->toArray();
+    @endphp
+
+    @if(count($hasSectionWise) > 0)
+    {{-- SECTION WISE RESULT --}}
+    <center>
+        <span class="bolder" > --- SECTION WISE RESULT --- </span>
+    </center>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td class="pass">
+                    <strong>
+                        Section
+                    </strong>
+                </td>
+                <td class="pass">
+                    <strong>
+                        Result
+                    </strong>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($hasSectionWise as $pKey => $totalSectionsRow)
+                @if(!($loop->first || $loop->iteration == 2))
+                @php
+                    $thisVarients = \App\Helpers\Helper::categorizePoints($totalSectionsRow ?? []);
+                    $thisTotal = count(\App\Helpers\Helper::selectPointsQuestions($totalSectionsRow));
+                    $thisToBeCounted = $thisTotal - count($thisVarients['na']);
+
+                    $thisFailed = abs(count(array_column($thisVarients['negative'], 'value')));
+                    $thisAchieved = $thisToBeCounted - abs($thisFailed);
+
+                    if ($thisFailed <= 0) {
+                        $thisAchieved = array_sum(array_column($thisVarients['positive'], 'value'));
+                    }
+                    
+                    if ($thisToBeCounted > 0) {
+                        $thisPer = number_format(($thisAchieved / $thisToBeCounted) * 100, 2);
+                    } else {
+                        $thisPer = 0;
+                    }
+
+                    $titleOfSection = 'Page ' . ($pKey + 1);
+
+                    if (is_array($versionedForm) && isset($versionedForm[$pKey])) {
+                        $titleOfSection = collect($versionedForm[$pKey])->where('type', 'header')->get(0)->label ?? ('Page ' . ($pKey + 1));
+                    }
+
+                @endphp
+
+                    <tr>
+                        <td class="@if($thisPer > 80) pass @else fail @endif">
+                            {{ html_entity_decode($titleOfSection) }}
+                        </td>
+                        <td class="@if($thisPer > 80) pass @else fail @endif">
+                            {{ number_format($thisPer, 2) }}%
+                        </td>
+                    </tr>
+                @endif
+            @empty
+                <tr>
+                    <td>
+                        No Data Found
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+    {{-- SECTION WISE RESULT --}}
+    @endif
+
+    <br><br>
+
+    <center>
+        <span class="bolder" > --- FAILED ITEMS --- </span>
+    </center>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Inspection Item</th>
+                <th>Result</th>
+                <th colspan="{{ $maxColumns - 2 }}">Remark</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($data as $row)
+                @if(is_string($row[1]) && (strtolower($row[1]) == 'no' || strtolower($row[1]) == 'fail'))
+                    <tr class="fail">
+                        @foreach ($row as $key => $value)
+                            <td colspan="{{ $loop->last && count($row) < $maxColumns ? $maxColumns - count($row) + 1 : 1 }}"
+                                style="font-weight: {{ $loop->first ? 'bold' : 'normal' }}">
+                                @if(is_string($value) && strpos($value, 'SIGN-20') !== false)
+                                    @php $webpToPng = str_replace(".webp", ".png", $value); @endphp
+                                    @if(file_exists(storage_path("app/public/workflow-task-uploads-thumbnails/{$webpToPng}")) && is_file(storage_path("app/public/workflow-task-uploads-thumbnails/{$webpToPng}")))
+                                        <img src="{{ public_path("storage/workflow-task-uploads-thumbnails/{$webpToPng}") }}" style="height: 100px;">
+                                    @else
+                                        <img src="{{ public_path("no-image-found.png") }}" style="height: 100px;">                                    
+                                    @endif
+                                @elseif(is_array($value))
+                                    @foreach ($value as $vl)
+                                        @if(strpos($vl, 'SIGN-20') !== false)
+                                            @php $webpToPng = str_replace(".webp", ".png", $vl); @endphp
+                                            @if(file_exists(storage_path("app/public/workflow-task-uploads-thumbnails/{$webpToPng}")) && is_file(storage_path("app/public/workflow-task-uploads-thumbnails/{$webpToPng}")))
+                                                <img src="{{ public_path("storage/workflow-task-uploads-thumbnails/{$webpToPng}") }}" style="height: 100px;">
+                                            @else
+                                                <img src="{{ public_path("no-image-found.png") }}" style="height: 100px;">
+                                            @endif
+                                        @else
+                                            {!! $vl !!}
+                                        @endif
+                                    @endforeach
+                                @else
+                                    {!! $value !!}
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endif
+            @endforeach
+        </tbody>
+    </table>
+    @endif
+    {{-- FAILED ITEMS --}}
+
+    {{-- FULL REPORT --}}
+    <div style="page-break-before:always !important;">
+    <br>
+
+    <center>
+        <span class="bolder" > --- FULL REPORT --- </span>
+    </center>    
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Inspection Item</th>
+                    <th>Result</th>
+                    <th colspan="{{ $maxColumns - 2 }}">Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($data as $row)
+                    <tr 
+                    @if(is_string($row[1]) && (strtolower($row[1]) == 'pass' || strtolower($row[1]) == 'yes')) 
+                    class="pass" 
+                    @elseif(is_string($row[1]) && (strtolower($row[1]) == 'no' || strtolower($row[1]) == 'fail'))
+                    class="fail" 
+                    @else 
+                    class="pass" 
+                    @endif 
+                    >
+                        @foreach ($row as $key => $value)
+                            <td colspan="{{ $loop->last && count($row) < $maxColumns ? $maxColumns - count($row) + 1 : 1 }}"
+                                style="font-weight: {{ $loop->first ? 'bold' : 'normal' }}">
+                                @if(is_string($value) && strpos($value, 'SIGN-20') !== false)
+                                    @php $webpToPng = str_replace(".webp", ".png", $value); @endphp
+                                    @if(file_exists(storage_path("app/public/workflow-task-uploads-thumbnails/{$webpToPng}")) && is_file(storage_path("app/public/workflow-task-uploads-thumbnails/{$webpToPng}")))
+                                        <img src="{{ public_path("storage/workflow-task-uploads-thumbnails/{$webpToPng}") }}" style="height: 100px;">
+                                    @else
+                                        <img src="{{ public_path("no-image-found.png") }}" style="height: 100px;">                                    
+                                    @endif
+                                @elseif(is_array($value))
+                                    @foreach ($value as $vl)
+                                        @if(strpos($vl, 'SIGN-20') !== false)
+                                            @php $webpToPng = str_replace(".webp", ".png", $vl); @endphp
+                                            @if(file_exists(storage_path("app/public/workflow-task-uploads-thumbnails/{$webpToPng}")) && is_file(storage_path("app/public/workflow-task-uploads-thumbnails/{$webpToPng}")))
+                                                <img src="{{ public_path("storage/workflow-task-uploads-thumbnails/{$webpToPng}") }}" style="height: 100px;">
+                                            @else
+                                                <img src="{{ public_path("no-image-found.png") }}" style="height: 100px;">
+                                            @endif
+                                        @else
+                                            {!! $vl !!}
+                                        @endif
+                                    @endforeach
+                                @else
+                                    {!! $value !!}
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>    
+    </div>
+    {{-- FULL REPORT --}}
+
+        @if(isset($task->parent->parent->checklist_id) && in_array($task->parent->parent->checklist_id, [106, 107]))
+
+        @php
+            if (is_string($task->data)) {
+                $dataCal1 = json_decode($task->data, true);
+            } else if (is_array($task->data)) {
+                $dataCal1 = $task->data;
+            } else {
+                $dataCal1 = [];
+            }
+
+            $c1_nos_2000 = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-2000');
+            $c1_amt_2000 = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-2000');
+
+            $c1_nos_500  = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-500');
+            $c1_amt_500  = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-500');
+
+            $c1_nos_200  = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-200');
+            $c1_amt_200  = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-200');
+
+            $c1_nos_100  = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-100');
+            $c1_amt_100  = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-100');
+
+            $c1_nos_50   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-50');
+            $c1_amt_50   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-50');
+
+            $c1_nos_20   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-20');
+            $c1_amt_20   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-20');
+
+            $c1_nos_10   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-10');
+            $c1_amt_10   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-10');
+
+            $c1_nos_5    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-5');
+            $c1_amt_5    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-5');
+
+            $c1_nos_2    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-2');
+            $c1_amt_2    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-2');
+
+            $c1_nos_1    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-nos-1');
+            $c1_amt_1    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'c1-amount-1');
+
+            $c1_total    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'final-denomination-total');
+
+            $cash_zreport     = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cash-zreport-c1');
+            $cash_actual      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cash-actual-c1');
+            $cash_source      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cash-source-c1');
+            $cash_diff        = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cash-difference-c1');
+            $cash_reason      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cash-reason-c1');
+
+            $card_zreport     = \App\Helpers\Helper::getObjectsByName($dataCal1, 'card-zreport-c1');
+            $card_actual      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'card-actual-c1');
+            $card_source      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'card-source-c1');
+            $card_diff        = \App\Helpers\Helper::getObjectsByName($dataCal1, 'card-difference-c1');
+            $card_reason      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'card-reason-c1');
+
+            $swiggy_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'swiggy-zreport-c1');
+            $swiggy_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'swiggy-actual-c1');
+            $swiggy_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'swiggy-source-c1');
+            $swiggy_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'swiggy-difference-c1');
+            $swiggy_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'swiggy-reason-c1');
+
+            $zomato_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'zomato-zreport-c1');
+            $zomato_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'zomato-actual-c1');
+            $zomato_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'zomato-source-c1');
+            $zomato_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'zomato-difference-c1');
+            $zomato_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'zomato-reason-c1');
+
+            $paytm_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'paytm-zreport-c1');
+            $paytm_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'paytm-actual-c1');
+            $paytm_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'paytm-source-c1');
+            $paytm_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'paytm-difference-c1');
+            $paytm_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'paytm-reason-c1');
+
+            $bharatpe_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'bharatpe-zreport-c1');
+            $bharatpe_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'bharatpe-actual-c1');
+            $bharatpe_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'bharatpe-source-c1');
+            $bharatpe_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'bharatpe-difference-c1');
+            $bharatpe_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'bharatpe-reason-c1');
+
+            $phonepe_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'phonepe-zreport-c1');
+            $phonepe_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'phonepe-actual-c1');
+            $phonepe_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'phonepe-source-c1');
+            $phonepe_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'phonepe-difference-c1');
+            $phonepe_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'phonepe-reason-c1');
+
+            $vouchers_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'vouchers-zreport-c1');
+            $vouchers_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'vouchers-actual-c1');
+            $vouchers_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'vouchers-source-c1');
+            $vouchers_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'vouchers-difference-c1');
+            $vouchers_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'vouchers-reason-c1');
+
+            $creditsale_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'creditsale-zreport-c1');
+            $creditsale_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'creditsale-actual-c1');
+            $creditsale_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'creditsale-source-c1');
+            $creditsale_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'creditsale-difference-c1');
+            $creditsale_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'creditsale-reason-c1');
+
+            $pinelabs_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'pinelabs-zreport-c1');
+            $pinelabs_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'pinelabs-actual-c1');
+            $pinelabs_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'pinelabs-source-c1');
+            $pinelabs_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'pinelabs-difference-c1');
+            $pinelabs_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'pinelabs-reason-c1');
+
+            $other_zreport   = \App\Helpers\Helper::getObjectsByName($dataCal1, 'other-zreport-c1');
+            $other_actual    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'other-actual-c1');
+            $other_source    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'other-source-c1');
+            $other_diff      = \App\Helpers\Helper::getObjectsByName($dataCal1, 'other-difference-c1');
+            $other_reason    = \App\Helpers\Helper::getObjectsByName($dataCal1, 'other-reason-c1');
+
+            $total_zreport = 
+                (is_numeric($cash_zreport) ? $cash_zreport : 0) +
+                (is_numeric($card_zreport) ? $card_zreport : 0) +
+                (is_numeric($swiggy_zreport) ? $swiggy_zreport : 0) +
+                (is_numeric($zomato_zreport) ? $zomato_zreport : 0) +
+                (is_numeric($paytm_zreport) ? $paytm_zreport : 0) +
+                (is_numeric($bharatpe_zreport) ? $bharatpe_zreport : 0) +
+                (is_numeric($phonepe_zreport) ? $phonepe_zreport : 0) +
+                (is_numeric($vouchers_zreport) ? $vouchers_zreport : 0) +
+                (is_numeric($creditsale_zreport) ? $creditsale_zreport : 0) +
+                (is_numeric($pinelabs_zreport) ? $pinelabs_zreport : 0) +
+                (is_numeric($other_zreport) ? $other_zreport : 0);
+
+            $total_actual = 
+                (is_numeric($cash_actual) ? $cash_actual : 0) +
+                (is_numeric($card_actual) ? $card_actual : 0) +
+                (is_numeric($swiggy_actual) ? $swiggy_actual : 0) +
+                (is_numeric($zomato_actual) ? $zomato_actual : 0) +
+                (is_numeric($paytm_actual) ? $paytm_actual : 0) +
+                (is_numeric($bharatpe_actual) ? $bharatpe_actual : 0) +
+                (is_numeric($phonepe_actual) ? $phonepe_actual : 0) +
+                (is_numeric($vouchers_actual) ? $vouchers_actual : 0) +
+                (is_numeric($creditsale_actual) ? $creditsale_actual : 0) +
+                (is_numeric($pinelabs_actual) ? $pinelabs_actual : 0) +
+                (is_numeric($other_actual) ? $other_actual : 0);
+
+            $total_diff = 
+                (is_numeric($cash_diff) ? $cash_diff : 0) +
+                (is_numeric($card_diff) ? $card_diff : 0) +
+                (is_numeric($swiggy_diff) ? $swiggy_diff : 0) +
+                (is_numeric($zomato_diff) ? $zomato_diff : 0) +
+                (is_numeric($paytm_diff) ? $paytm_diff : 0) +
+                (is_numeric($bharatpe_diff) ? $bharatpe_diff : 0) +
+                (is_numeric($phonepe_diff) ? $phonepe_diff : 0) +
+                (is_numeric($vouchers_diff) ? $vouchers_diff : 0) +
+                (is_numeric($creditsale_diff) ? $creditsale_diff : 0) +
+                (is_numeric($pinelabs_diff) ? $pinelabs_diff : 0) +
+                (is_numeric($other_diff) ? $other_diff : 0);
+
+            $opening_cash     = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cal-1-a-text-1758616033754-0');
+            $cash_sale        = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cal-1-b-text-1758616033754-0');
+            $expenses         = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cal-1-c-text-1758616033754-0');
+            $banking          = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cal-1-d-text-1758616033754-0');
+            $cash_in_hand     = \App\Helpers\Helper::getObjectsByName($dataCal1, 'cal-1-e-text-1758616033754-0');
+        @endphp
+
+            <div class="row">
+                <h5 class="text-center mb-4">Cash Register (As per CLS z report details)</h5>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th colspan="3">Cash Denomination Summary</th>
+                                <th>Particulars</th>
+                                <th>As per Z Report</th>
+                                <th>Actual</th>
+                                <th>Source</th>
+                                <th>Difference</th>
+                                <th>Reason for Difference</th>
+                            </tr>
+                            <tr>
+                                <th>Deno.</th>
+                                <th>Count</th>
+                                <th>Amount</th>
+                                <th colspan="6"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="pass">2000</td><td class="pass">{{ number_format(floatval($c1_nos_2000), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_2000), 2) }}</td><td class="pass">Cash</td><td class="pass">{{ number_format(floatval($cash_zreport), 2) }}</td><td class="pass">{{ $cash_actual }}</td><td class="pass">{{ number_format(floatval($cash_source), 2) }}</td><td class="pass">{{ $cash_diff }}</td><td class="pass">{{ $cash_reason }}</td></tr>
+                            <tr><td class="pass">500</td><td class="pass">{{ number_format(floatval($c1_nos_500), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_500), 2) }}</td><td class="pass">Card</td><td class="pass">{{ number_format(floatval($card_zreport), 2) }}</td><td class="pass">{{ $card_actual }}</td><td class="pass">{{ number_format(floatval($card_source), 2) }}</td><td class="pass">{{ $card_diff }}</td><td class="pass">{{ $card_reason }}</td></tr>
+                            <tr><td class="pass">200</td><td class="pass">{{ number_format(floatval($c1_nos_200), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_200), 2) }}</td><td class="pass">Swiggy</td><td class="pass">{{ number_format(floatval($swiggy_zreport), 2) }}</td><td class="pass">{{ $swiggy_actual }}</td><td class="pass">{{ number_format(floatval($swiggy_source), 2) }}</td><td class="pass">{{ $swiggy_diff }}</td><td class="pass">{{ $swiggy_reason }}</td></tr>
+                            <tr><td class="pass">100</td><td class="pass">{{ number_format(floatval($c1_nos_100), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_100), 2) }}</td><td class="pass">Zomato</td><td class="pass">{{ number_format(floatval($zomato_zreport), 2) }}</td><td class="pass">{{ $zomato_actual }}</td><td class="pass">{{ number_format(floatval($zomato_source), 2) }}</td><td class="pass">{{ $zomato_diff }}</td><td class="pass">{{ $zomato_reason }}</td></tr>
+                            <tr><td class="pass">50</td><td class="pass">{{ number_format(floatval($c1_nos_50), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_50), 2) }}</td><td class="pass">Paytm</td><td class="pass">{{ number_format(floatval($paytm_zreport), 2) }}</td><td class="pass">{{ $paytm_actual }}</td><td class="pass">{{ number_format(floatval($paytm_source), 2) }}</td><td class="pass">{{ $paytm_diff }}</td><td class="pass">{{ $paytm_reason }}</td></tr>
+                            <tr><td class="pass">20</td><td class="pass">{{ number_format(floatval($c1_nos_20), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_20), 2) }}</td><td class="pass">Bharatpe</td><td class="pass">{{ number_format(floatval($bharatpe_zreport), 2) }}</td><td class="pass">{{ $bharatpe_actual }}</td><td class="pass">{{ number_format(floatval($bharatpe_source), 2) }}</td><td class="pass">{{ $bharatpe_diff }}</td><td class="pass">{{ $bharatpe_reason }}</td></tr>
+                            <tr><td class="pass">10</td><td class="pass">{{ number_format(floatval($c1_nos_10), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_10), 2) }}</td><td class="pass">PhonePe</td><td class="pass">{{ number_format(floatval($phonepe_zreport), 2) }}</td><td class="pass">{{ $phonepe_actual }}</td><td class="pass">{{ number_format(floatval($phonepe_source), 2) }}</td><td class="pass">{{ $phonepe_diff }}</td><td class="pass">{{ $phonepe_reason }}</td></tr>
+                            <tr><td class="pass">5</td><td class="pass">{{ number_format(floatval($c1_nos_5), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_5), 2) }}</td><td class="pass">Vouchers</td><td class="pass">{{ number_format(floatval($vouchers_zreport), 2) }}</td><td class="pass">{{ $vouchers_actual }}</td><td class="pass">{{ number_format(floatval($vouchers_source), 2) }}</td><td class="pass">{{ $vouchers_diff }}</td><td class="pass">{{ $vouchers_reason }}</td></tr>
+                            <tr><td class="pass">2</td><td class="pass">{{ number_format(floatval($c1_nos_2), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_2), 2) }}</td><td class="pass">Credit Sale</td><td class="pass">{{ number_format(floatval($creditsale_zreport), 2) }}</td><td class="pass">{{ $creditsale_actual }}</td><td class="pass">{{ number_format(floatval($creditsale_source), 2) }}</td><td class="pass">{{ $creditsale_diff }}</td><td class="pass">{{ $creditsale_reason }}</td></tr>
+                            <tr><td class="pass">1</td><td class="pass">{{ number_format(floatval($c1_nos_1), 0) }}</td><td class="pass">{{ number_format(floatval($c1_amt_1), 2) }}</td><td class="pass">Pinelabs</td><td class="pass">{{ number_format(floatval($pinelabs_zreport), 2) }}</td><td class="pass">{{ $pinelabs_actual }}</td><td class="pass">{{ number_format(floatval($pinelabs_source), 2) }}</td><td class="pass">{{ $pinelabs_diff }}</td><td class="pass">{{ $pinelabs_reason }}</td></tr>
+                            <tr><td class="pass">Other</td><td class="pass">N/A</td><td class="pass">N/A</td><td class="pass">Others</td><td class="pass">{{ number_format(floatval($other_zreport), 2) }}</td><td class="pass">{{ $other_actual }}</td><td class="pass">{{ number_format(floatval($other_source), 2) }}</td><td class="pass">{{ $other_diff }}</td><td class="pass">{{ $other_reason }}</td></tr>
+                            <tr><td colspan="2" class="text-center fw-bold pass">Total</td><td class="pass">{{ number_format(floatval($c1_total), 2) }}</td><td class="pass">Total</td><td class="pass">{{ number_format(floatval($total_zreport), 2) }}</td><td class="pass">{{ $total_actual }}</td><td class="pass"></td><td class="pass">{{ $total_diff }}</td><td class="pass"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr><td class="pass">Opening Cash of the day (A)</td><td class="pass">{{ number_format(floatval($opening_cash), 2) }}</td></tr>
+                        <tr><td class="pass">Total Cash Sale (B)</td><td class="pass">{{ number_format(floatval($cash_sale), 2) }}</td></tr>
+                        <tr><td class="pass">Expenses for the day (C)</td><td class="pass">{{ number_format(floatval($expenses), 2) }}</td></tr>
+                        <tr><td class="pass">Banking Done for the day (D)</td><td class="pass">{{ number_format(floatval($banking), 2) }}</td></tr>
+                        <tr class="fw-bold pass"><td class="pass">Cash In Hand for the day (E = A + B - C - D)</td><td class="pass">{{ number_format(floatval($cash_in_hand), 2) }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        @endif
+
+    <br><br>
+
+    <center>
+        <span class="bolder" > --- End of Report --- </span>
+    </center>
+
+</body>
+</html>
