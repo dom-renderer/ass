@@ -1,169 +1,145 @@
 @extends('layouts.app-master')
 
+@push('css')
+    <script src="{{ asset('assets/js/tailwindcss-cdn.js') }}"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['DynamicAppFont', 'sans-serif'] },
+                    colors: { primary: '#3b82f6', 'primary-hover': '#2563eb' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'DynamicAppFont', sans-serif !important;
+        }
+    </style>
+@endpush
+
 @section('content')
-    <div class="bg-light p-4 rounded">
-        <div class="lead">
-            
-        </div>
-
-        <div class="mx-w-700 mx-auto">
-            <div class="card mb-4">
-                <div class="card-body">
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">First Name</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->name }}
-                            </p>
-                        </div>
-                    </div><hr>
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Middle Name</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->middle_name }}
-                            </p>
-                        </div>
-                    </div><hr>
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Last Name</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->last_name }}
-                            </p>
-                        </div>
-                    </div><hr>
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Username</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->username }}
-                            </p>
-                        </div>
-                    </div><hr>
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Employee ID</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->employee_id }}
-                            </p>
-                        </div>
-                    </div><hr>
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Phone number</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->phone_number }}
-                            </p>
-                        </div>
-                    </div><hr>
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Email</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->email }}
-                            </p>
-                        </div>
-                    </div><hr>
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Role</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->roles->first()->name ?? '-' }}
-                            </p>
-                        </div>
-                    </div><hr>
-
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Status</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                {{ $user->status == 1 ? 'Enabled' : 'Disabled' }}
-                            </p>
-                        </div>
-                    </div> <hr>
-
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Profile</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                @if(!empty($user->profile) && file_exists(storage_path("app/public/users/{$user->profile}")))
-                                <img src="{{ asset("storage/users/{$user->profile}") }}" style="height:100px;width:100px;border:1px solid black;">
-                                @else
-                                    No profile picture uploaded
-                                @endif
-                            </p>
-                        </div>
-                    </div>
-
-                    @if(!empty($store))
-
-                    <hr>
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0"> {{ $type }} </p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0"> 
-                                <ul>
-                                    @forelse ($store as $item)
-                                        <li> {{ $item }} </li>
-                                    @empty
-                                    -
-                                    @endforelse
-                                </ul>
-
-                            </p>
-                        </div>
-                    </div>
-
-                    @endif
-
-                </div>
+    <div class="px-6 pt-6 pb-10">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800">User Profile</h2>
+                <p class="text-sm text-gray-400 mt-0.5">Detailed view of user identity and configurations.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('users.index') }}"
+                    class="px-4 py-2 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors shadow-sm text-decoration-none inline-flex items-center">
+                    <i class="bi bi-arrow-left mr-2"></i> Back
+                </a>
+                @php
+                    use App\Models\User;
+                    $trashedUser = User::withTrashed()->find($user->id);
+                @endphp
+                @if(!$trashedUser->trashed())
+                    <a href="{{ route('users.edit', $user->id) }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm text-decoration-none">
+                        <i class="bi bi-pencil"></i> Edit Profile
+                    </a>
+                @endif
             </div>
         </div>
-        
-        <div class="mt-4">
-            @php
-            use App\Models\User;
-            $user = User::withTrashed()->find($user->id);
-             
-            @endphp
-            @if(!$user->trashed())
-            <a href="{{ route('users.edit', $user->id) }}" class="btn btn-info">Edit</a>
-            @endif
-            <a href="{{ route('users.index') }}" class="btn btn-default">Back</a>
+
+        <!-- Main Profile Card -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
+
+                <!-- Header Section with Avatar -->
+                <div class="bg-gray-50/80 border-b border-gray-100 flex flex-col md:flex-row items-center gap-6"
+                    style="padding: 2rem;">
+                    <div class="flex-shrink-0">
+                        @if(!empty($user->profile) && file_exists(storage_path("app/public/users/{$user->profile}")))
+                            <img src="{{ asset("storage/users/{$user->profile}") }}" alt="Profile"
+                                class="h-28 w-28 rounded-full object-cover border-4 border-white shadow-sm">
+                        @else
+                            <div
+                                class="h-28 w-28 rounded-full bg-blue-100 border-4 border-white shadow-sm flex items-center justify-center text-blue-600">
+                                <i class="bi bi-person text-5xl"></i>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="text-center md:text-left flex-1">
+                        <h1 class="text-3xl font-bold text-gray-800 tracking-tight m-0">{{ $user->name }}
+                            {{ $user->middle_name }} {{ $user->last_name }}</h1>
+                        <p
+                            class="text-base text-gray-500 mt-2 m-0 flex flex-wrap items-center justify-center md:justify-start gap-3">
+                            <span class="inline-flex items-center gap-1.5"><i class="bi bi-person-vcard text-gray-400"></i>
+                                {{ $user->username }}</span>
+                            <span class="text-gray-300 hidden md:inline">|</span>
+                            <span class="inline-flex items-center gap-1.5"><i class="bi bi-star text-gray-400"></i>
+                                {{ $user->roles->first()->name ?? 'Unassigned' }}</span>
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        @if($user->status == 1)
+                            <span
+                                class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
+                                <i class="bi bi-check-circle-fill mr-1.5 text-green-500"></i> Active User
+                            </span>
+                        @else
+                            <span
+                                class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-red-100 text-red-800 border border-red-200">
+                                <i class="bi bi-x-circle-fill mr-1.5 text-red-500"></i> Disabled
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Details Grouping -->
+                <div class="py-6" style="padding-left: 2rem; padding-right: 2rem;">
+                    <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Contact & Identity Info
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+                        <div class="space-y-1">
+                            <span class="block text-xs font-medium text-gray-500">Employee ID</span>
+                            <span
+                                class="block text-sm text-gray-800 font-semibold">{{ $user->employee_id ?: 'Not provided' }}</span>
+                        </div>
+
+                        <div class="space-y-1">
+                            <span class="block text-xs font-medium text-gray-500">Email Address</span>
+                            <span class="block text-sm text-gray-800 font-semibold">{{ $user->email ?: '-' }}</span>
+                        </div>
+
+                        <div class="space-y-1">
+                            <span class="block text-xs font-medium text-gray-500">Phone Number</span>
+                            <span class="block text-sm text-gray-800 font-semibold">{{ $user->phone_number ?: '-' }}</span>
+                        </div>
+
+                        <div class="space-y-1">
+                            <span class="block text-xs font-medium text-gray-500">System Role</span>
+                            <span
+                                class="block text-sm text-gray-800 font-semibold">{{ $user->roles->first()->name ?? '-' }}</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                @if(!empty($store))
+                    <!-- Extended Access Section -->
+                    <div class="py-6 border-t border-gray-100 bg-[#f8fafc]" style="padding-left: 2rem; padding-right: 2rem;">
+                        <h4 class="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="bi bi-hdd-network text-blue-500"></i> Assigned {{ $type }}
+                        </h4>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-0 mb-0" style="list-style-type: none;">
+                            @forelse ($store as $item)
+                                <li
+                                    class="flex items-center gap-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg px-4 py-2.5 shadow-sm">
+                                    <i class="bi bi-pin-map-fill text-green-500"></i> {{ $item }}
+                                </li>
+                            @empty
+                                <li class="col-span-full text-sm text-gray-500 italic">No specific assignments found.</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                @endif
+
+            </div>
         </div>
     </div>
 @endsection
