@@ -21,40 +21,38 @@ use App\Services\StoreQrCodeService;
 
 class StoreController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $page_title = "Stores";
         $stores = Store::query()
-        ->when(!empty(request('filter_location')), function ($builder) {
-            $builder->where('code', request('filter_location'));
-        })
-        ->when(!empty(request('filter_ucode')), function ($builder) {
-            $builder->where('ucode', request('filter_ucode'));
-        })
-        ->when(!empty(request('filter_name')) && request('filter_name') != 'all', function ($builder) {
-            $builder->where('name', 'LIKE', '%' . request('filter_name') . '%');
-        })
-        ->when(!empty(request('filter_state')) && request('filter_state') != 'all', function ($builder) {
-            $builder->whereHas('thecity', function ($innerBuilder) {
-                $innerBuilder->where('city_state', request('filter_state'));
-            });
-        })
-        ->when(!empty(request('filter_mt')) && request('filter_mt') != 'all', function ($builder) {
-            $builder->whereHas('modeltype', function ($innerBuilder) {
-                $innerBuilder->where('id', request('filter_mt'));
-            });
-        })
-        ->when(!empty(request('filter_city')) && request('filter_city') != 'all', function ($builder) {
-            $builder->whereHas('thecity', function ($innerBuilder) {
-                $innerBuilder->where('city_id', request('filter_city'));
-            });
-        })
-        ->when(!empty(request('filter_dom')) && request('filter_dom') != 'all', function ($builder) {
-            $builder->where('dom_id', request('filter_dom'));
-        })
-        ->paginate(12)->withQueryString();
-        $storeTypes = StoreType::all();
-        $modelTypes = ModelType::all();
-        $storeCategories = StoreCategory::all();
+            ->when(!empty(request('filter_location')), function ($builder) {
+                $builder->where('code', request('filter_location'));
+            })
+            ->when(!empty(request('filter_ucode')), function ($builder) {
+                $builder->where('ucode', request('filter_ucode'));
+            })
+            ->when(!empty(request('filter_name')) && request('filter_name') != 'all', function ($builder) {
+                $builder->where('name', 'LIKE', '%' . request('filter_name') . '%');
+            })
+            ->when(!empty(request('filter_state')) && request('filter_state') != 'all', function ($builder) {
+                $builder->whereHas('thecity', function ($innerBuilder) {
+                    $innerBuilder->where('city_state', request('filter_state'));
+                });
+            })
+            ->when(!empty(request('filter_mt')) && request('filter_mt') != 'all', function ($builder) {
+                $builder->whereHas('modeltype', function ($innerBuilder) {
+                    $innerBuilder->where('id', request('filter_mt'));
+                });
+            })
+            ->when(!empty(request('filter_city')) && request('filter_city') != 'all', function ($builder) {
+                $builder->whereHas('thecity', function ($innerBuilder) {
+                    $innerBuilder->where('city_id', request('filter_city'));
+                });
+            })
+            ->when(!empty(request('filter_dom')) && request('filter_dom') != 'all', function ($builder) {
+                $builder->where('dom_id', request('filter_dom'));
+            })
+            ->paginate(12)->withQueryString();
 
         $stateFilter = City::select('city_state')->where('city_state', request('filter_state'))->first();
         $cityFilter = City::select('city_name')->where('city_id', request('filter_city'))->first();
@@ -62,10 +60,21 @@ class StoreController extends Controller
             $builder->where('id', Helper::$roles['divisional-operations-manager']);
         })->select('employee_id', 'name', 'middle_name', 'last_name')->where('id', request('filter_dom'))->first();
 
-        return view( 'stores.index', compact( 'page_title', 'stores', 'storeTypes', 'modelTypes', 'stateFilter', 'cityFilter', 'domFilter', 'storeCategories' ) );
+        return view('stores.index', compact('page_title', 'stores', 'stateFilter', 'cityFilter', 'domFilter'));
     }
 
-    public function store(Request $request) {
+    public function create()
+    {
+        $page_title = "Add Location";
+        $storeTypes = StoreType::all();
+        $modelTypes = ModelType::all();
+        $storeCategories = StoreCategory::all();
+
+        return view('stores.create', compact('page_title', 'storeTypes', 'modelTypes', 'storeCategories'));
+    }
+
+    public function store(Request $request)
+    {
 
         $request->validate([
             'store_type' => 'required',
@@ -130,17 +139,19 @@ class StoreController extends Controller
         return redirect()->route('stores.index')->with('success', 'Location created successfully');
     }
 
-    public function edit(Request $request, $id) {
+    public function edit(Request $request, $id)
+    {
         $page_title = "Locations";
         $store = Store::find($id);
         $storeTypes = StoreType::all();
         $modelTypes = ModelType::all();
         $storeCategories = StoreCategory::all();
 
-        return view( 'stores.edit', compact( 'page_title', 'store', 'storeTypes', 'modelTypes', 'storeCategories' ) );
+        return view('stores.edit', compact('page_title', 'store', 'storeTypes', 'modelTypes', 'storeCategories'));
     }
 
-    public function update(Request $request, $stores) {
+    public function update(Request $request, $stores)
+    {
 
         $request->validate([
             'store_type' => "required",
@@ -150,21 +161,21 @@ class StoreController extends Controller
                 Rule::unique('stores', 'name')->where(function ($query) {
                     $query->where('type', 0);
                 })
-                ->ignore($stores),
+                    ->ignore($stores),
             ],
             'code' => [
                 'required',
                 Rule::unique('stores', 'code')->where(function ($query) {
                     $query->where('type', 0);
                 })
-                ->ignore($stores),
+                    ->ignore($stores),
             ],
             'ucode' => [
                 'required',
                 Rule::unique('stores', 'ucode')->where(function ($query) {
                     $query->where('type', 0);
                 })
-                ->ignore($stores),
+                    ->ignore($stores),
             ],
             'open_time' => 'required',
             'close_time' => 'required',
@@ -209,31 +220,33 @@ class StoreController extends Controller
         return redirect()->route('stores.index')->with('success', 'Location updated successfully');
     }
 
-    public function destroy(Store $stores, $id) {
+    public function destroy(Store $stores, $id)
+    {
         $stores = Store::find($id);
 
         $stores->delete();
-        return redirect()->route('stores.index')->with('success', 'Location deleted successfully');        
+        return redirect()->route('stores.index')->with('success', 'Location deleted successfully');
     }
 
-    public function select2List(Request $request) {
+    public function select2List(Request $request)
+    {
         $queryString = trim($request->searchQuery);
         $page = $request->input('page', 1);
         $limit = 10;
         $getAll = $request->getall;
-    
+
         if ($request->has('assetswloc') && $request->assetswloc == 1) {
             $query = Store::withoutGlobalScope('os');
         } else {
             $query = Store::query();
         }
-        
-    
+
+
         if (!empty($queryString)) {
-            $query->where(function ($innerBuilder) use  ($queryString) {
+            $query->where(function ($innerBuilder) use ($queryString) {
                 $innerBuilder->where('name', 'LIKE', "%{$queryString}%")
-                ->orWhere('code', 'LIKE', "%{$queryString}%")
-                ->orWhere('ucode', 'LIKE', "%{$queryString}%");
+                    ->orWhere('code', 'LIKE', "%{$queryString}%")
+                    ->orWhere('ucode', 'LIKE', "%{$queryString}%");
             });
         }
 
@@ -265,7 +278,7 @@ class StoreController extends Controller
                 'text' => "{$item->code} - $item->name" . ($item->type ? '[ASSET]' : '[LOCATION]')
             ];
         });
-    
+
         if ($getAll && $page == 1 && auth()->user()->isAdmin()) {
             $response->push(['id' => 'all', 'text' => 'All']);
         }
@@ -278,20 +291,21 @@ class StoreController extends Controller
         ]);
     }
 
-    public function stateLists(Request $request) {
+    public function stateLists(Request $request)
+    {
         $queryString = trim($request->searchQuery);
         $page = $request->input('page', 1);
         $limit = 10;
         $getAll = $request->getall;
-    
+
         $query = City::query();
-    
+
         if (!empty($queryString)) {
             $query->where('city_state', 'LIKE', "%{$queryString}%");
         }
 
         $query = $query->groupBy('city_state');
-    
+
         $data = $query->paginate($limit, ['*'], 'page', $page);
         $response = $data->map(function ($item) {
             return [
@@ -312,19 +326,20 @@ class StoreController extends Controller
         ]);
     }
 
-    public function cityLists(Request $request) {
+    public function cityLists(Request $request)
+    {
         $queryString = trim($request->searchQuery);
         $page = $request->input('page', 1);
         $state = $request->state;
         $limit = 10;
         $getAll = $request->getall;
-    
+
         $query = City::query();
-    
+
         if (!empty($queryString)) {
             $query->where('city_name', 'LIKE', "%{$queryString}%");
         }
-    
+
         if (!empty($state)) {
             if ($state !== 'all') {
                 $query->where('city_state', $state);
@@ -351,9 +366,10 @@ class StoreController extends Controller
         ]);
     }
 
-    public function importStores(Request $request) {
+    public function importStores(Request $request)
+    {
         $file = $request->file('xlsx');
-        $data = Excel::toArray(new LocationImport(),$file);
+        $data = Excel::toArray(new LocationImport(), $file);
         $response = [];
         $successCount = $errorCount = 0;
 
@@ -397,8 +413,8 @@ class StoreController extends Controller
 
                         $codeName = explode(' ', $row[0]);
                         $city = City::where(\DB::raw('LOWER(city_name)'), strtolower($row[2]))
-                        ->where(\DB::raw('LOWER(city_state)'), strtolower($row[3]))
-                        ->first();
+                            ->where(\DB::raw('LOWER(city_state)'), strtolower($row[3]))
+                            ->first();
 
                         if (isset($codeName[0]) && isset($codeName[1])) {
 
@@ -422,7 +438,7 @@ class StoreController extends Controller
                                 continue;
                             }
 
-                            if (!empty($row[27]) && StoreCategory::where( \DB::raw('LOWER(name)'), strtolower( $row[27] ) )->doesntExist() ) {
+                            if (!empty($row[27]) && StoreCategory::where(\DB::raw('LOWER(name)'), strtolower($row[27]))->doesntExist()) {
                                 $errorCount++;
                                 $response[$key] = 'Store category is invalid at AB' . ($key + 1);
                                 continue;
@@ -450,7 +466,7 @@ class StoreController extends Controller
 
                                         if (!empty($row[6])) {
                                             $currentDom->last_name = $row[6];
-                                        }                                        
+                                        }
 
                                         if (!empty($row[11])) {
                                             if (User::withTrashed()->where('employee_id', '!=', $explodedDomString[0])->where('phone_number', $row[11])->exists()) {
@@ -517,7 +533,7 @@ class StoreController extends Controller
                                                 'type' => 3
                                             ]);
                                         }
-                                        
+
                                     }
 
                                 } else {
@@ -525,8 +541,8 @@ class StoreController extends Controller
                                     $response[$key] = 'DOM does not exists at K' . ($key + 1);
                                     continue;
                                 }
-                            }                            
-                            
+                            }
+
 
                             if (isset($row[12])) {
                                 $toBeAdded['address1'] = $row[12];
@@ -567,7 +583,7 @@ class StoreController extends Controller
                             if (isset($row[21])) {
                                 $toBeAdded['location_url'] = $row[21];
                             }
-                            
+
                             if (isset($row[22]) && !empty(trim($row[22]))) {
                                 $cellValue = trim($row[22]);
 
@@ -618,7 +634,7 @@ class StoreController extends Controller
                             } else {
                                 $toBeAdded['ops_start_time'] = '12:00 AM';
                             }
-                            
+
                             if (isset($row[25]) && !empty(trim($row[25]))) {
                                 $cellValue = trim($row[25]);
 
@@ -646,20 +662,20 @@ class StoreController extends Controller
                             $toBeAdded['name'] = implode(' ', array_splice($codeName, 1, count($codeName)));
                             $toBeAdded['store_type'] = StoreType::firstWhere(\DB::raw('LOWER(name)'), strtolower($row[1]))->id ?? null;
                             $toBeAdded['model_type'] = ModelType::firstWhere(\DB::raw('LOWER(name)'), strtolower($row[9]))->id ?? null;
-                            $toBeAdded['store_category'] = StoreCategory::firstWhere( \DB::raw( 'LOWER(name)' ), strtolower( $row[27] ) )->id ?? null;
+                            $toBeAdded['store_category'] = StoreCategory::firstWhere(\DB::raw('LOWER(name)'), strtolower($row[27]))->id ?? null;
                             $toBeAdded['city'] = $city->city_id ?? null;
                             $toBeAdded['dom_id'] = $theCurrentDom;
-                            
+
                             Store::updateOrCreate([
                                 'code' => $toBeAdded['code'],
                             ], $toBeAdded);
 
                             $successCount++;
-                            
+
                         } else {
-                                $errorCount++;
-                                $response[$key] = 'Valid store information does not exists at A' . ($key + 1);
-                                continue;
+                            $errorCount++;
+                            $response[$key] = 'Valid store information does not exists at A' . ($key + 1);
+                            continue;
                         }
                     } else {
 
@@ -680,37 +696,39 @@ class StoreController extends Controller
                             return response()->json(['status' => false, 'message' => 'Uploaded file has an incorrect number of columns.']);
                         }
 
-                        if (!(
-                               strtoupper($row[0])  == $expectedHeaders[0]
-                            && strtoupper($row[1])  == $expectedHeaders[1]
-                            && strtoupper($row[2])  == $expectedHeaders[2]
-                            && strtoupper($row[3])  == $expectedHeaders[3]
-                            && strtoupper($row[4])  == $expectedHeaders[4]
-                            && strtoupper($row[5])  == $expectedHeaders[5]
-                            && strtoupper($row[6])  == $expectedHeaders[6]
-                            && strtoupper($row[7])  == $expectedHeaders[7]
-                            && strtoupper($row[8])  == $expectedHeaders[8]
-                            && strtoupper($row[9])  == $expectedHeaders[9]
-                            && strtoupper($row[10]) == $expectedHeaders[10]
-                            && strtoupper($row[11]) == $expectedHeaders[11]
-                            && strtoupper($row[12]) == $expectedHeaders[12]
-                            && strtoupper($row[13]) == $expectedHeaders[13]
-                            && strtoupper($row[14]) == $expectedHeaders[14]
-                            && strtoupper($row[15]) == $expectedHeaders[15]
-                            && strtoupper($row[16]) == $expectedHeaders[16]
-                            && strtoupper($row[17]) == $expectedHeaders[17]
-                            && strtoupper($row[18]) == $expectedHeaders[18]
-                            && strtoupper($row[19]) == $expectedHeaders[19]
-                            && strtoupper($row[20]) == $expectedHeaders[20]
-                            && strtoupper($row[21]) == $expectedHeaders[21]
-                            && strtoupper($row[22]) == $expectedHeaders[22]
-                            && strtoupper($row[23]) == $expectedHeaders[23]
-                            && strtoupper($row[24]) == $expectedHeaders[24]
-                            && strtoupper($row[25]) == $expectedHeaders[25]
-                            && strtoupper($row[26]) == $expectedHeaders[26]
-                            && strtoupper($row[27]) == $expectedHeaders[27]
-                        )) {
-                            
+                        if (
+                            !(
+                                strtoupper($row[0]) == $expectedHeaders[0]
+                                && strtoupper($row[1]) == $expectedHeaders[1]
+                                && strtoupper($row[2]) == $expectedHeaders[2]
+                                && strtoupper($row[3]) == $expectedHeaders[3]
+                                && strtoupper($row[4]) == $expectedHeaders[4]
+                                && strtoupper($row[5]) == $expectedHeaders[5]
+                                && strtoupper($row[6]) == $expectedHeaders[6]
+                                && strtoupper($row[7]) == $expectedHeaders[7]
+                                && strtoupper($row[8]) == $expectedHeaders[8]
+                                && strtoupper($row[9]) == $expectedHeaders[9]
+                                && strtoupper($row[10]) == $expectedHeaders[10]
+                                && strtoupper($row[11]) == $expectedHeaders[11]
+                                && strtoupper($row[12]) == $expectedHeaders[12]
+                                && strtoupper($row[13]) == $expectedHeaders[13]
+                                && strtoupper($row[14]) == $expectedHeaders[14]
+                                && strtoupper($row[15]) == $expectedHeaders[15]
+                                && strtoupper($row[16]) == $expectedHeaders[16]
+                                && strtoupper($row[17]) == $expectedHeaders[17]
+                                && strtoupper($row[18]) == $expectedHeaders[18]
+                                && strtoupper($row[19]) == $expectedHeaders[19]
+                                && strtoupper($row[20]) == $expectedHeaders[20]
+                                && strtoupper($row[21]) == $expectedHeaders[21]
+                                && strtoupper($row[22]) == $expectedHeaders[22]
+                                && strtoupper($row[23]) == $expectedHeaders[23]
+                                && strtoupper($row[24]) == $expectedHeaders[24]
+                                && strtoupper($row[25]) == $expectedHeaders[25]
+                                && strtoupper($row[26]) == $expectedHeaders[26]
+                                && strtoupper($row[27]) == $expectedHeaders[27]
+                            )
+                        ) {
+
                             \App\Http\Controllers\ChecklistSchedulingController::recordImport([
                                 'checklist_id' => null,
                                 'type' => 2,
@@ -769,24 +787,24 @@ class StoreController extends Controller
 
     public function exportStores()
     {
-        $stores = Store::with( [ 'thecity', 'storetype', 'modeltype', 'dom', 'storecategory' ] )
-        ->when(!empty(request('filter_location')), function ($builder) {
-            $builder->where('code', request('filter_location'));
-        })
-        ->when(!empty(request('filter_state')) && request('filter_state') != 'all', function ($builder) {
-            $builder->whereHas('thecity', function ($innerBuilder) {
-                $innerBuilder->where('city_state', request('filter_state'));
-            });
-        })
-        ->when(!empty(request('filter_city')) && request('filter_city') != 'all', function ($builder) {
-            $builder->whereHas('thecity', function ($innerBuilder) {
-                $innerBuilder->where('city_id', request('filter_city'));
-            });
-        })
-        ->when(!empty(request('filter_dom')) && request('filter_dom') != 'all', function ($builder) {
-            $builder->where('dom_id', request('filter_dom'));
-        })
-        ->get();
+        $stores = Store::with(['thecity', 'storetype', 'modeltype', 'dom', 'storecategory'])
+            ->when(!empty(request('filter_location')), function ($builder) {
+                $builder->where('code', request('filter_location'));
+            })
+            ->when(!empty(request('filter_state')) && request('filter_state') != 'all', function ($builder) {
+                $builder->whereHas('thecity', function ($innerBuilder) {
+                    $innerBuilder->where('city_state', request('filter_state'));
+                });
+            })
+            ->when(!empty(request('filter_city')) && request('filter_city') != 'all', function ($builder) {
+                $builder->whereHas('thecity', function ($innerBuilder) {
+                    $innerBuilder->where('city_id', request('filter_city'));
+                });
+            })
+            ->when(!empty(request('filter_dom')) && request('filter_dom') != 'all', function ($builder) {
+                $builder->where('dom_id', request('filter_dom'));
+            })
+            ->get();
 
         return Excel::download(new \App\Exports\StoresExport($stores), 'stores.xlsx');
     }
