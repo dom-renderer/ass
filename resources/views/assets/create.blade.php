@@ -2,253 +2,76 @@
 
 @push('css')
     <script src="{{ asset('assets/js/tailwindcss-cdn.js') }}"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['DynamicAppFont', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
     <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet" />
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
 
     <style type="text/css">
-        #map {
-            height: 650px;
-            width: 100%;
+        body {
+            font-family: 'DynamicAppFont', sans-serif !important;
         }
 
-        #description {
-            font-family: Roboto;
-            font-size: 15px;
-            font-weight: 300;
+        /* ── Select2 overrides to match Tailwind input height/style ── */
+        .select2-container {
+            width: 100% !important;
+            background: none;
+            border: none;
         }
 
-        #infowindow-content .title {
-            font-weight: bold;
+        .select2-container--classic .select2-selection--single {
+            height: 42px !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 0.375rem !important;
+            background-color: #fff !important;
+            box-shadow: none !important;
         }
 
-        #infowindow-content {
-            display: none;
+        .select2-container--classic .select2-selection--single .select2-selection__rendered {
+            line-height: 40px !important;
+            padding-left: 12px !important;
+            color: #374151 !important;
+            font-size: 0.875rem !important;
         }
 
-        #map #infowindow-content {
-            display: inline;
+        .select2-container--classic .select2-selection--single .select2-selection__arrow {
+            height: 40px !important;
+            border-left: 1px solid #e5e7eb !important;
+            background: transparent !important;
         }
 
-        .pac-card {
-            background-color: #fff;
-            border: 0;
-            border-radius: 2px;
-            box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
-            margin: 10px;
-            padding: 0 0.5em;
-            font: 400 18px Roboto, Arial, sans-serif;
-            overflow: hidden;
-            font-family: Roboto;
-            padding: 0;
+        .select2-container--classic .select2-selection--single .select2-selection__clear {
+            height: 38px !important;
+            line-height: 38px !important;
+            margin-right: 27px !important;
+            font-size: 25px !important;
+            color: #9ca3af !important;
         }
 
-        #pac-container {
-            padding-bottom: 12px;
-            margin-right: 12px;
-            z-index: 99999;
-        }
-
-        .pac-controls {
-            display: inline-block;
-            padding: 5px 11px;
-        }
-
-        .pac-controls label {
-            font-family: Roboto;
-            font-size: 13px;
-            font-weight: 300;
-        }
-
-        #pac-input {
-            background-color: #fff;
-            font-family: Roboto;
-            font-size: 15px;
-            font-weight: 300;
-            margin-left: 12px;
-            padding: 0 11px 0 13px;
-            text-overflow: ellipsis;
-            width: 400px;
-            position: absolute;
-            top: 11px;
-            height: 40px;
-            left: 188px;
-        }
-
-        #pac-input:focus {
-            border-color: #4d90fe;
-        }
-
-        #title {
-            color: #fff;
-            background-color: #4d90fe;
-            font-size: 25px;
-            font-weight: 500;
-            padding: 6px 12px;
-        }
-
-        #target {
-            width: 345px;
-        }
-
-        div[id^=map_canvas],
-        div[id^=map_canvas] div {
-            overflow: auto;
-        }
-
-        .cursor-pointer {
-            cursor: pointer;
-        }
-
-        .pac-container {
-            background-color: #FFF;
-            z-index: 2000;
-            position: fixed;
-            display: inline-block;
+        .select2-container--classic .select2-selection--single:focus {
+            border-color: #3b82f6 !important;
+            outline: none !important;
         }
 
         .select2-container .select2-search--inline .select2-search__field {
             height: 20px !important;
         }
 
-        .select2-container--classic .select2-selection--single .select2-selection__arrow {
-            height: 38px !important;
-        }
-
-        .select2-container--classic .select2-selection--single {
-            height: 40px !important;
-        }
-
-        .select2-container--classic .select2-selection--single .select2-selection__clear {
-            height: 37px !important;
-        }
-
-        .select2-container--classic .select2-selection--single .select2-selection__rendered {
-            line-height: 39px !important;
-        }
-
-        .select2-container {
-            background: none;
-            border: none;
-        }
-
-        [data-afs] .afs-shell {
-            background: #fff;
-            border: 1px solid #e8eaf0;
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        [data-afs] .afs-head {
-            padding: 14px 18px;
-            border-bottom: 1px solid #eef1f6;
-            background: #fafbfd;
-        }
-
-        [data-afs] .afs-head h2 {
-            margin: 0;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #161922;
-        }
-
-        [data-afs] .afs-body {
-            padding: 16px;
-        }
-
-        [data-afs] .afs-card {
-            background: #fff;
-            border: 1px solid #e8eaf0;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            overflow: hidden;
-        }
-
-        [data-afs] .afs-card-h {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border-bottom: 1px dashed #e6e9f0;
-            background: #fbfcfe;
-        }
-
-        [data-afs] .afs-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-
-        [data-afs] .afs-icon.blue {
-            background: #eef4ff;
-            color: #3b6ecc;
-        }
-
-        [data-afs] .afs-icon.green {
-            background: #edfaf3;
-            color: #1d8a55;
-        }
-
-        [data-afs] .afs-icon.amber {
-            background: #fff8ec;
-            color: #b06f10;
-        }
-
-        [data-afs] .afs-icon.purple {
-            background: #f3f1ff;
-            color: #6447d6;
-        }
-
-        [data-afs] .afs-title {
-            margin: 0;
-            font-weight: 600;
-            font-size: .88rem;
-            color: #1a1c22;
-        }
-
-        [data-afs] .afs-card-b {
-            padding: 12px;
-        }
-
-        [data-afs] .form-group {
-            margin-bottom: 12px;
-        }
-
-        [data-afs] .form-label {
-            font-size: .76rem;
-            font-weight: 500;
-            color: #5a5f6e;
-            margin-bottom: 5px;
-        }
-
-        [data-afs] .form-control,
-        [data-afs] .select2-container--classic .select2-selection--single {
-            height: 40px !important;
-            border: 1px solid #dde0ea !important;
-            border-radius: 8px !important;
-            background: #fafbfd !important;
-            font-size: .84rem !important;
-            box-shadow: none !important;
-        }
-
-        [data-afs] .form-control:focus {
-            border-color: #3b6ecc !important;
-            box-shadow: 0 0 0 3px rgba(59, 110, 204, .12) !important;
-            background: #fff !important;
-        }
-
-        [data-afs] .select2-container--classic .select2-selection--single .select2-selection__rendered {
-            line-height: 38px !important;
-            color: #1a1c22 !important;
-        }
-
-        [data-afs] .select2-container--classic .select2-selection--single .select2-selection__arrow {
-            height: 38px !important;
+        .select2-dropdown {
+            border: 1px solid #e5e7eb !important;
+            border-radius: 0.375rem !important;
+            z-index: 9999 !important;
         }
 
         .doc-title-row {
@@ -262,797 +85,407 @@
             margin-top: 8px;
             background: #fff;
         }
+
         .doc-title-row .doc-file-name {
             font-size: 12px;
             color: #475569;
             word-break: break-all;
         }
 
-        [data-ofs] * {
-            box-sizing: border-box;
+        #assets-table {
+            width: 100% !important;
+            table-layout: fixed;
         }
 
-        [data-ofs] {
-            background: #F5F6F8;
-            min-height: 100vh;
-            padding: 2rem 1.5rem;
+        #assets-table col.col-asset,
+        #assets-table th.col-asset,
+        #assets-table td.col-asset {
+            width: 45% !important;
         }
 
-        /* ── Page header ── */
-        .ofs-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
+        #assets-table col.col-description,
+        #assets-table th.col-description,
+        #assets-table td.col-description {
+            width: 45% !important;
         }
 
-        .ofs-header h1 {
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: #0E0F11;
-            letter-spacing: -0.02em;
-            margin: 0;
+        #assets-table col.col-action,
+        #assets-table th.col-action,
+        #assets-table td.col-action {
+            width: 10% !important;
         }
 
-        .ofs-breadcrumb {
-            font-size: 0.78rem;
-            color: #8A8F9C;
-            margin-top: 2px;
+        #assets-table td .select2-container,
+        #assets-table td .form-control {
+            width: 100% !important;
+            max-width: 100%;
         }
-
-        /* ── Section card ── */
-        .ofs-card {
-            background: #ffffff;
-            border: 1px solid #E8EAF0;
-            border-radius: 14px;
-            margin-bottom: 1.25rem;
-            overflow: hidden;
-        }
-
-        .ofs-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.1rem 1.5rem;
-            border-bottom: 1px solid #F0F2F7;
-            background: #FAFBFD;
-        }
-
-        .ofs-card-header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .ofs-card-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            flex-shrink: 0;
-        }
-
-        .ofs-card-icon.blue {
-            background: #EEF4FF;
-            color: #3B6ECC;
-        }
-
-        .ofs-card-icon.green {
-            background: #EDFAF3;
-            color: #1D8A55;
-        }
-
-        .ofs-card-icon.amber {
-            background: #FFF8EC;
-            color: #B06F10;
-        }
-
-        .ofs-card-title {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: #1A1C22;
-            margin: 0;
-        }
-
-        .ofs-card-subtitle {
-            font-size: 0.75rem;
-            color: #8A8F9C;
-            margin: 0;
-        }
-
-        .ofs-card-body {
-            padding: 1.4rem 1.5rem;
-        }
-
-        /* ── Field grid ── */
-        .ofs-field-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        /* ── Field label + control ── */
-        .ofs-field {}
-
-        .ofs-label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #5A5F6E;
-            margin-bottom: 5px;
-            letter-spacing: 0.01em;
-        }
-
-        .ofs-label .req {
-            color: #D94E4E;
-            margin-left: 1px;
-        }
-
-        /* Override Bootstrap form-control within our scope */
-        [data-ofs] .form-control,
-        [data-ofs] .select2-container--default .select2-selection--single {
-            height: 38px !important;
-            border: 1px solid #DDE0EA !important;
-            border-radius: 8px !important;
-            background: #FAFBFD !important;
-            font-size: 0.84rem !important;
-            color: #1A1C22 !important;
-            padding: 0 12px !important;
-            box-shadow: none !important;
-            transition: border-color 0.15s, box-shadow 0.15s;
-            line-height: 38px !important;
-        }
-
-        [data-ofs] .form-control:focus {
-            border-color: #3B6ECC !important;
-            box-shadow: 0 0 0 3px rgba(59, 110, 204, 0.12) !important;
-            background: #fff !important;
-        }
-
-        [data-ofs] .select2-container--default.select2-container--focus .select2-selection--single {
-            border-color: #3B6ECC !important;
-            box-shadow: 0 0 0 3px rgba(59, 110, 204, 0.12) !important;
-        }
-
-        [data-ofs] .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 38px !important;
-            padding-left: 0 !important;
-            color: #1A1C22 !important;
-            font-size: 0.84rem !important;
-        }
-
-        [data-ofs] .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 38px !important;
-            top: 0 !important;
-            right: 8px !important;
-        }
-
-        [data-ofs] .select2-dropdown {
-            border: 1px solid #DDE0EA !important;
-            border-radius: 10px !important;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1) !important;
-            overflow: hidden;
-        }
-
-        /* ── Item line card ── */
-        .ofs-item-card {
-            background: #FAFBFD;
-            border: 1px solid #E8EAF0;
-            border-radius: 10px;
-            padding: 1rem 1.1rem;
-            position: relative;
-            transition: border-color 0.15s;
-        }
-
-        .ofs-item-card:hover {
-            border-color: #C5CBE0;
-        }
-
-        .ofs-item-grid {
-            display: grid;
-            grid-template-columns: 2fr 3fr 80px 120px 38px;
-            gap: 10px;
-            align-items: end;
-        }
-
-        @media (max-width: 768px) {
-            .ofs-item-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .ofs-item-grid>*:last-child {
-                grid-column: span 2;
-            }
-        }
-
-        /* ── Customization accordion ── */
-        .ofs-custom-toggle {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 10px;
-            padding: 6px 10px;
-            font-size: 0.76rem;
-            font-weight: 500;
-            color: #3B6ECC;
-            background: #EEF4FF;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            width: fit-content;
-        }
-
-        .ofs-custom-toggle:hover {
-            background: #DDE8FA;
-        }
-
-        .ofs-custom-panel {
-            margin-top: 10px;
-            padding: 12px;
-            background: #fff;
-            border: 1px solid #E8EAF0;
-            border-radius: 8px;
-        }
-
-        .ofs-summary-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.72rem;
-            color: #5A5F6E;
-            background: #F0F2F7;
-            border-radius: 4px;
-            padding: 2px 7px;
-            margin-top: 8px;
-        }
-
-        /* ── Summary panel ── */
-        .ofs-summary-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            font-size: 0.84rem;
-            color: #5A5F6E;
-            border-bottom: 1px dashed #EEF0F7;
-        }
-
-        .ofs-summary-row:last-child {
-            border-bottom: none;
-        }
-
-        .ofs-summary-row.total {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #0E0F11;
-            border-top: 1.5px solid #E8EAF0;
-            margin-top: 4px;
-            padding-top: 12px;
-        }
-
-        .ofs-summary-value {
-            font-family: 'DM Mono', monospace;
-            font-weight: 500;
-            font-size: 0.85rem;
-        }
-
-        .ofs-summary-row.total .ofs-summary-value {
-            font-size: 1.05rem;
-            color: #1D8A55;
-        }
-
-        .ofs-discount-value {
-            color: #D94E4E;
-        }
-
-        /* ── Buttons ── */
-        .ofs-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.84rem;
-            font-weight: 500;
-            border-radius: 9px;
-            padding: 9px 18px;
-            border: none;
-            cursor: pointer;
-            transition: opacity 0.15s, transform 0.1s;
-            text-decoration: none;
-        }
-
-        .ofs-btn:active {
-            transform: scale(0.98);
-        }
-
-        .ofs-btn-primary {
-            background: #1A1C22;
-            color: #ffffff;
-        }
-
-        .ofs-btn-primary:hover {
-            background: #2D3142;
-            color: #fff;
-        }
-
-        .ofs-btn-outline {
-            background: transparent;
-            border: 1px solid #DDE0EA;
-            color: #3B6ECC;
-        }
-
-        .ofs-btn-outline:hover {
-            background: #EEF4FF;
-        }
-
-        .ofs-btn-ghost {
-            background: transparent;
-            border: 1px solid #DDE0EA;
-            color: #8A8F9C;
-        }
-
-        .ofs-btn-ghost:hover {
-            background: #F5F6F8;
-            color: #1A1C22;
-        }
-
-        .ofs-btn-danger-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
-            background: #FFF0F0;
-            border: 1px solid #F5C2C2;
-            color: #D94E4E;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-            flex-shrink: 0;
-            transition: background 0.15s;
-        }
-
-        .ofs-btn-danger-icon:hover {
-            background: #FFE0E0;
-        }
-
-        /* ── Add item ── */
-        .ofs-add-item-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 11px;
-            border: 1.5px dashed #C5CBE0;
-            border-radius: 10px;
-            background: transparent;
-            color: #8A8F9C;
-            font-size: 0.82rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
-            margin-top: 10px;
-        }
-
-        .ofs-add-item-btn:hover {
-            border-color: #3B6ECC;
-            color: #3B6ECC;
-            background: #EEF4FF;
-        }
-
-        /* ── Coupon hint ── */
-        .ofs-coupon-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #1D8A55;
-            background: #EDFAF3;
-            border: 1px solid #B4E8CF;
-            border-radius: 6px;
-            padding: 4px 10px;
-            margin-top: 8px;
-        }
-
-        /* form-check inside our card */
-        [data-ofs] .form-check {
-            margin-bottom: 4px;
-        }
-
-        [data-ofs] .form-check-label {
-            font-size: 0.80rem;
-            color: #3A3D48;
-        }
-
-        [data-ofs] .form-check-input {
-            margin-top: 2px;
-        }
-
-        /* ── footer action bar ── */
-        .ofs-action-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 1.1rem 1.5rem;
-            background: #fff;
-            border: 1px solid #E8EAF0;
-            border-radius: 14px;
-            margin-top: 0.5rem;
-        }
-
-        .select2-container--classic .select2-selection--single .select2-selection__clear {
-            margin-right:27px!important;
-            font-size:25px!important;
-        }
-
-
     </style>
 @endpush
 
 @section('content')
-    <div data-afs>
-        <form method="POST" action="{{ route('assets.store') }}" class="gift-submit-form" enctype="multipart/form-data">
-            @csrf
-            <div class="afs-shell">
-                <div class="afs-head">
-                    <h2>Add Asset</h2>
-                </div>
-                <div class="afs-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="afs-card">
-                                <div class="afs-card-h">
-                                    <span class="afs-icon blue"><i class="bi bi-diagram-3"></i></span>
-                                    <p class="afs-title">Classification & Assignment</p>
-                                </div>
-                                <div class="afs-card-b">
 
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="model_type"> Make <span
-                                                        class="text-danger">*</span> </label>
-                                                <select name="model_type" id="model_type" class="form-control"
-                                                    required>
-                                                    <option value=""></option>
-                                                    @foreach ($modelTypes as $typeRow)
-                                                        <option value="{{ $typeRow->id }}"> {{ $typeRow->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+    {{-- Page Header --}}
+    <div class="px-6 pt-6 pb-2">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('assets.index') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="bi bi-arrow-left text-xl"></i>
+            </a>
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800">Add Asset</h2>
+                <p class="text-sm text-gray-400 mt-0.5">Assets &rsaquo; New Asset</p>
+            </div>
+        </div>
+    </div>
 
-                                    @if ($errors->has('model_type'))
-                                        <span
-                                            class="text-danger text-left">{{ $errors->first('model_type') }}</span>
-                                    @endif
+    <form method="POST" action="{{ route('assets.store') }}" class="gift-submit-form" enctype="multipart/form-data">
+        @csrf
 
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="store_type"> Model <span
-                                                        class="text-danger">*</span> </label>
-                                                <select name="store_type" id="store_type" class="form-control"
-                                                    required>
-                                                    <option value=""></option>
-                                                    @foreach ($storeTypes as $typeRow)
-                                                        <option value="{{ $typeRow->id }}"> {{ $typeRow->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+        <div class="px-6 py-4 space-y-5">
 
-                                    @if ($errors->has('store_type'))
-                                        <span
-                                            class="text-danger text-left">{{ $errors->first('store_type') }}</span>
-                                    @endif
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {{-- Left Column --}}
+                <div class="space-y-5">
 
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="store_category">Category <span
-                                                        class="text-danger">*</span> </label>
-                                                <select name="store_category" id="store_category"
-                                                    class="form-control">
-                                                    <option value=""></option>
-                                                    @foreach ($storeCategories as $category_row)
-                                                        <option value="{{ $category_row->id }}">
-                                                            {{ $category_row->name }} </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('store_category'))
-                                        <span
-                                            class="text-danger text-left">{{ $errors->first('store_category') }}</span>
-                                    @endif
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="location_item">Location </label>
-                                                <select name="location_item" id="location_item"
-                                                    class="form-control">
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('location_item'))
-                                        <span
-                                            class="text-danger text-left">{{ $errors->first('location_item') }}</span>
-                                    @endif
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="dom_id"> Assign To </label>
-                                                <select name="dom_id" id="dom_id"></select>
-                                                @if ($errors->has('dom_id'))
-                                                    <span
-                                                        class="text-danger text-left">{{ $errors->first('dom_id') }}</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('dom_id'))
-                                        <span class="text-danger text-left">{{ $errors->first('dom_id') }}</span>
-                                    @endif
-                                </div>
+                    {{-- ── Section 1: Classification & Assignment ── --}}
+                    <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm pb-6">
+                        <div class="flex items-start gap-3 px-6 py-4 border-b border-gray-100 mb-4">
+                            <div class="mt-0.5 text-blue-500">
+                                <i class="bi bi-diagram-3 text-xl"></i>
                             </div>
-
-                            <div class="afs-card">
-                                <div class="afs-card-h">
-                                    <span class="afs-icon purple"><i class="bi bi-upc-scan"></i></span>
-                                    <p class="afs-title">Identity & Codes</p>
-                                </div>
-                                <div class="afs-card-b">
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="locname"> Name <span
-                                                        class="text-danger">*</span> </label>
-                                                <input name="name" type="text" class="form-control"
-                                                    id="locname" placeholder="Asset Name"
-                                                    value="{{ old('name') }}" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('name'))
-                                        <span class="text-danger text-left">{{ $errors->first('name') }}</span>
-                                    @endif
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="loccode"> Unique Code <span
-                                                        class="text-danger">*</span> </label>
-                                                <input name="ucode" type="text" class="form-control"
-                                                    id="ucode" placeholder="Unique Code" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('ucode'))
-                                        <span class="text-danger text-left">{{ $errors->first('ucode') }}</span>
-                                    @endif
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="loccode"> Internal Code </label>
-                                                <input name="code" type="text" class="form-control"
-                                                    id="loccode" placeholder="Internal Code">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('code'))
-                                        <span class="text-danger text-left">{{ $errors->first('code') }}</span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="afs-card">
-                                <div class="afs-card-h">
-                                    <span class="afs-icon amber"><i class="bi bi-calendar-check"></i></span>
-                                    <p class="afs-title">Purchase & Lifecycle</p>
-                                </div>
-                                <div class="afs-card-b">
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="po_date"> PO Date <span
-                                                        class="text-danger">*</span> </label>
-                                                <input name="po_date" type="date" class="form-control"
-                                                    id="po_date" placeholder="PO Date" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('po_date'))
-                                        <span class="text-danger text-left">{{ $errors->first('po_date') }}</span>
-                                    @endif
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="warranty"> Warranty (Months) <span
-                                                        class="text-danger">*</span> </label>
-                                                <input name="warranty" type="number" min="0"
-                                                    step="1" max="1000" class="form-control"
-                                                    id="warranty" placeholder="Warranty (Months)" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('warranty'))
-                                        <span
-                                            class="text-danger text-left">{{ $errors->first('warranty') }}</span>
-                                    @endif
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="warranty"> Lifespan (Months) <span
-                                                        class="text-danger">*</span> </label>
-                                                <input name="lifespan" type="number" min="0"
-                                                    step="1" max="1000" class="form-control"
-                                                    id="warranty" placeholder="Lifespan (Months)" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('lifespan'))
-                                        <span
-                                            class="text-danger text-left">{{ $errors->first('lifespan') }}</span>
-                                    @endif
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="asset_status_id"> Asset Status
-                                                    <span class="text-danger">*</span> </label>
-                                                <select name="asset_status_id" class="form-control" required>
-                                                    @foreach ($assetStatuses as $status)
-                                                        <option value="{{ $status->id }}"
-                                                            style="color: {{ $status->color }}; font-weight: bold;">
-                                                            {{ $status->title }} </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($errors->has('asset_status_id'))
-                                        <span
-                                            class="text-danger text-left">{{ $errors->first('asset_status_id') }}</span>
-                                    @endif
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="col-6">
-                            <div class="afs-card">
-                                <div class="afs-card-h">
-                                    <span class="afs-icon green"><i class="bi bi-images"></i></span>
-                                    <p class="afs-title">Media & Documents</p>
-                                </div>
-                                <div class="afs-card-b">
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="primary_image"> Primary Image
-                                                </label>
-                                                <input type="file" class="filepond" name="primary_image"
-                                                    id="primary_image" data-max-file-size="3MB">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="secondary_images"> Secondary Images
-                                                </label>
-                                                <input type="file" class="filepond" name="secondary_images[]"
-                                                    id="secondary_images" multiple data-max-file-size="3MB">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="col-12">
-                                                <label class="form-label" for="documents"> Documents </label>
-                                                <input type="file" class="filepond" name="documents[]"
-                                                    id="documents" multiple data-max-file-size="10MB">
-                                                <small class="text-muted">Allowed: PDF, DOC, DOCX, XLS, XLSX, JPG,
-                                                    PNG (Max 10MB each)</small>
-                                                <div id="document-title-wrap" class="mt-2"></div>
-                                                @error('document_titles')
-                                                    <span class="text-danger text-left d-block mt-1">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="afs-card">
-                                <div class="afs-card-h">
-                                    <span class="afs-icon blue"><i class="bi bi-link-45deg"></i></span>
-                                    <p class="afs-title">Linked Assets</p>
-                                </div>
-                                <div class="afs-card-b">
-
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="assets-table">
-                                            <thead>
-                                                <tr>
-                                                    <th style="width: 45%">Asset</th>
-                                                    <th style="width: 45%">Description</th>
-                                                    <th style="width: 10%">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                        <button type="button" class="ofs-btn btn-primary"
-                                            id="add-asset-btn"><i class="bi bi-plus"></i> Add Asset</button>
-                                    </div>
-                                </div>
+                            <div class="flex-1">
+                                <h3 class="text-base font-semibold text-gray-800">Classification & Assignment</h3>
+                                <p class="text-sm text-gray-400">Make, model, and location assignment</p>
                             </div>
                         </div>
 
-                        <div class="ofs-action-bar">
-                            <button type="submit" class="ofs-btn btn-primary">
-                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M13 2H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5l-3-3z"></path>
-                                    <polyline points="13 5 10 5 10 2"></polyline>
-                                    <line x1="7" y1="9" x2="9" y2="9"></line>
-                                    <line x1="8" y1="8" x2="8" y2="10"></line>
-                                </svg>
-                                Save Asset
-                            </button>
-                            <a href="{{ route('assets.index') }}" class="ofs-btn ofs-btn-ghost">
-                                ← Back to Assets
-                            </a>
-                        </div>
+                        <div class="px-6 grid grid-cols-1 gap-4">
+                            {{-- Make --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="model_type">
+                                    Make <span class="text-red-500">*</span>
+                                </label>
+                                <select name="model_type" id="model_type" class="w-full" required>
+                                    <option value=""></option>
+                                    @foreach ($modelTypes as $typeRow)
+                                        <option value="{{ $typeRow->id }}" @if(old('model_type') == $typeRow->id) selected @endif>
+                                            {{ $typeRow->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('model_type'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('model_type') }}</p>
+                                @endif
+                            </div>
 
+                            {{-- Model --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="store_type">
+                                    Model <span class="text-red-500">*</span>
+                                </label>
+                                <select name="store_type" id="store_type" class="w-full" required>
+                                    <option value=""></option>
+                                    @foreach ($storeTypes as $typeRow)
+                                        <option value="{{ $typeRow->id }}" @if(old('store_type') == $typeRow->id) selected @endif>
+                                            {{ $typeRow->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('store_type'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('store_type') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Category --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="store_category">
+                                    Category <span class="text-red-500">*</span>
+                                </label>
+                                <select name="store_category" id="store_category" class="w-full" required>
+                                    <option value=""></option>
+                                    @foreach ($storeCategories as $category_row)
+                                        <option value="{{ $category_row->id }}" @if(old('store_category') == $category_row->id)
+                                        selected @endif>
+                                            {{ $category_row->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('store_category'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('store_category') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Location --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="location_item">
+                                    Location
+                                </label>
+                                <select name="location_item" id="location_item" class="w-full"></select>
+                                @if ($errors->has('location_item'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('location_item') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Assign To --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="dom_id">
+                                    Assign To
+                                </label>
+                                <select name="dom_id" id="dom_id" class="w-full"></select>
+                                @if ($errors->has('dom_id'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('dom_id') }}</p>
+                                @endif
+                            </div>
+                        </div>
                     </div>
+
+                    {{-- ── Section 2: Identity & Codes ── --}}
+                    <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm pb-6">
+                        <div class="flex items-start gap-3 px-6 py-4 border-b border-gray-100 mb-4">
+                            <div class="mt-0.5 text-purple-500">
+                                <i class="bi bi-upc-scan text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-800">Identity & Codes</h3>
+                                <p class="text-sm text-gray-400">Name and tracking identifiers</p>
+                            </div>
+                        </div>
+
+                        <div class="px-6 grid grid-cols-1 gap-4">
+                            {{-- Name --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="locname">
+                                    Name <span class="text-red-500">*</span>
+                                </label>
+                                <input name="name" type="text" id="locname"
+                                    class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                                    value="{{ old('name') }}" placeholder="Asset Name" required>
+                                @if ($errors->has('name'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('name') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Unique Code --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="ucode">
+                                    Unique Code <span class="text-red-500">*</span>
+                                </label>
+                                <input name="ucode" type="text" id="ucode"
+                                    class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                                    value="{{ old('ucode') }}" placeholder="Unique Code" required>
+                                @if ($errors->has('ucode'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('ucode') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Internal Code --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="loccode">
+                                    Internal Code
+                                </label>
+                                <input name="code" type="text" id="loccode"
+                                    class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                                    value="{{ old('code') }}" placeholder="Internal Code">
+                                @if ($errors->has('code'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('code') }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ── Section 3: Purchase & Lifecycle ── --}}
+                    <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm pb-6">
+                        <div class="flex items-start gap-3 px-6 py-4 border-b border-gray-100 mb-4">
+                            <div class="mt-0.5 text-amber-500">
+                                <i class="bi bi-calendar-check text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-800">Purchase & Lifecycle</h3>
+                                <p class="text-sm text-gray-400">PO dates, warranty and status</p>
+                            </div>
+                        </div>
+
+                        <div class="px-6 grid grid-cols-1 gap-4">
+                            {{-- PO Date --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="po_date">
+                                    PO Date <span class="text-red-500">*</span>
+                                </label>
+                                <input name="po_date" type="date" id="po_date"
+                                    class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                                    value="{{ old('po_date') }}" required>
+                                @if ($errors->has('po_date'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('po_date') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Warranty --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="warranty">
+                                    Warranty (Months) <span class="text-red-500">*</span>
+                                </label>
+                                <input name="warranty" type="number" min="0" step="1" max="1000" id="warranty"
+                                    class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                                    value="{{ old('warranty') }}" placeholder="Warranty (Months)" required>
+                                @if ($errors->has('warranty'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('warranty') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Lifespan --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="lifespan">
+                                    Lifespan (Months) <span class="text-red-500">*</span>
+                                </label>
+                                <input name="lifespan" type="number" min="0" step="1" max="1000" id="lifespan"
+                                    class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                                    value="{{ old('lifespan') }}" placeholder="Lifespan (Months)" required>
+                                @if ($errors->has('lifespan'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('lifespan') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Asset Status --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="asset_status_id">
+                                    Asset Status <span class="text-red-500">*</span>
+                                </label>
+                                <select name="asset_status_id" id="asset_status_id" class="w-full" required>
+                                    <option value=""></option>
+                                    @foreach ($assetStatuses as $status)
+                                        <option value="{{ $status->id }}"
+                                            style="color: {{ $status->color }}; font-weight: bold;">
+                                            {{ $status->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('asset_status_id'))
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $errors->first('asset_status_id') }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {{-- Right Column --}}
+                <div class="space-y-5">
+
+                    {{-- ── Section 4: Media & Documents ── --}}
+                    <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm pb-6">
+                        <div class="flex items-start gap-3 px-6 py-4 border-b border-gray-100 mb-4">
+                            <div class="mt-0.5 text-green-500">
+                                <i class="bi bi-images text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-800">Media & Documents</h3>
+                                <p class="text-sm text-gray-400">Attachments and images</p>
+                            </div>
+                        </div>
+
+                        <div class="px-6 grid grid-cols-1 gap-4">
+                            {{-- Primary Image --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="primary_image">
+                                    Primary Image
+                                </label>
+                                <input type="file" class="filepond" name="primary_image" id="primary_image"
+                                    data-max-file-size="3MB">
+                            </div>
+
+                            {{-- Secondary Images --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="secondary_images">
+                                    Secondary Images
+                                </label>
+                                <input type="file" class="filepond" name="secondary_images[]" id="secondary_images" multiple
+                                    data-max-file-size="3MB">
+                            </div>
+
+                            {{-- Documents --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5" for="documents">
+                                    Documents
+                                </label>
+                                <input type="file" class="filepond" name="documents[]" id="documents" multiple
+                                    data-max-file-size="10MB">
+                                <small class="text-gray-500">Allowed: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG (Max 10MB
+                                    each)</small>
+                                <div id="document-title-wrap" class="mt-2"></div>
+                                @error('document_titles')
+                                    <p class="text-red-500 text-xs mt-1.5">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ── Section 5: Linked Assets ── --}}
+                    <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm pb-4">
+                        <div class="flex items-start gap-3 px-6 py-4 border-b border-gray-100 mb-4">
+                            <div class="mt-0.5 text-blue-500">
+                                <i class="bi bi-link-45deg text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-800">Linked Assets</h3>
+                                <p class="text-sm text-gray-400">Associate other assets structurally</p>
+                            </div>
+                        </div>
+
+                        <div class="px-6">
+                            <div class="overflow-x-auto mb-3">
+                                <table class="w-full text-left border-collapse" id="assets-table">
+                                    <thead>
+                                        <tr class="border-b border-gray-100">
+                                            <th class="py-2.5 px-3 text-sm font-medium text-gray-700 w-[45%]">Asset</th>
+                                            <th class="py-2.5 px-3 text-sm font-medium text-gray-700 w-[45%]">Description
+                                            </th>
+                                            <th class="py-2.5 px-3 text-sm font-medium text-gray-700 w-[10%] text-center">
+                                                Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{-- JS populates this --}}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" id="add-asset-btn"
+                                class="inline-flex items-center justify-center gap-2 w-full py-2.5 border-1.5 border-dashed border-[#c5cbe0] hover:border-blue-500 hover:bg-blue-50 text-gray-500 hover:text-blue-600 rounded-lg text-sm font-medium transition-colors">
+                                <i class="bi bi-plus-lg"></i> Add Asset
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </form>
-    </div>
+
+            {{-- ── Submit ── --}}
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <button type="submit"
+                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-900 hover:bg-black text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                    <i class="bi bi-check2-circle"></i>
+                    Save Asset
+                </button>
+            </div>
+
+        </div>
+    </form>
 
 @endsection
 
 @push('js')
-    <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
+        integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script src="{{ asset('assets/js/jquery-validate.min.js') }}"></script>
     <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             FilePond.registerPlugin(FilePondPluginImagePreview);
 
             const inputElement = document.querySelector('input[id="primary_image"]');
@@ -1069,33 +502,37 @@
             const pond3 = FilePond.create(inputElement3, {
                 storeAsFile: true,
             });
+
             const documentTitleWrap = $('#document-title-wrap');
             function renderDocumentTitleInputs() {
                 const files = pond3.getFiles();
                 documentTitleWrap.empty();
-                files.forEach(function(fileItem, index) {
+                files.forEach(function (fileItem, index) {
                     const fileName = fileItem.file && fileItem.file.name ? fileItem.file.name : ('Document ' + (index + 1));
                     documentTitleWrap.append(`
-                        <div class="doc-title-row">
-                            <div class="doc-file-name" title="${fileName}">${fileName}</div>
-                            <div><input type="text" name="document_titles[]" class="form-control" placeholder="Document title (required)" required></div>
-                        </div>
-                    `);
+                            <div class="flex items-center gap-2 p-2 border border-[#e5e7eb] rounded-lg mt-2 bg-gray-50">
+                                <i class="bi bi-file-earmark-text text-gray-400"></i>
+                                <div class="text-xs text-gray-600 truncate flex-1" title="${fileName}">${fileName}</div>
+                                <input type="text" name="document_titles[]" 
+                                       class="h-[34px] px-3 text-sm border border-[#e5e7eb] rounded focus:outline-none focus:ring-1 focus:ring-blue-500 w-1/2" 
+                                       placeholder="Document title (required)" required>
+                            </div>
+                        `);
                 });
             }
             pond3.on('addfile', renderDocumentTitleInputs);
             pond3.on('removefile', renderDocumentTitleInputs);
 
-            $('.gift-submit-form').on('submit', function(e) {
+            $('.gift-submit-form').on('submit', function (e) {
                 const titleInputs = $('input[name="document_titles[]"]');
                 const seen = [];
                 let hasError = false;
 
-                titleInputs.removeClass('is-invalid');
-                titleInputs.each(function() {
+                titleInputs.removeClass('border-red-500 focus:ring-red-500');
+                titleInputs.each(function () {
                     const val = String($(this).val() || '').trim().toLowerCase();
                     if (!val || seen.includes(val)) {
-                        $(this).addClass('is-invalid');
+                        $(this).addClass('border-red-500 focus:ring-red-500');
                         hasError = true;
                     } else {
                         seen.push(val);
@@ -1125,18 +562,18 @@
                     type: "POST",
                     dataType: 'json',
                     delay: 250,
-                    data: function(params) {
+                    data: function (params) {
                         return {
                             searchQuery: params.term,
                             page: params.page || 1,
                             _token: "{{ csrf_token() }}"
                         };
                     },
-                    processResults: function(data, params) {
+                    processResults: function (data, params) {
                         params.page = params.page || 1;
 
                         return {
-                            results: $.map(data.items, function(item) {
+                            results: $.map(data.items, function (item) {
                                 return {
                                     id: item.id,
                                     text: item.text
@@ -1149,7 +586,7 @@
                     },
                     cache: true
                 },
-                templateResult: function(data) {
+                templateResult: function (data) {
                     if (data.loading) {
                         return data.text;
                     }
@@ -1158,9 +595,9 @@
                     $result.text(data.text);
                     return $result;
                 }
-            }).on('change', function() {});
+            });
 
-            $('#filter_dom').select2({
+            $('#filter_dom, #dom_id').select2({
                 placeholder: 'Select DOM',
                 allowClear: true,
                 width: '100%',
@@ -1170,7 +607,7 @@
                     type: "POST",
                     dataType: 'json',
                     delay: 250,
-                    data: function(params) {
+                    data: function (params) {
                         return {
                             searchQuery: params.term,
                             page: params.page || 1,
@@ -1180,11 +617,11 @@
                             getall: true
                         };
                     },
-                    processResults: function(data, params) {
+                    processResults: function (data, params) {
                         params.page = params.page || 1;
 
                         return {
-                            results: $.map(data.items, function(item) {
+                            results: $.map(data.items, function (item) {
                                 return {
                                     id: item.id,
                                     text: item.text
@@ -1197,251 +634,7 @@
                     },
                     cache: true
                 },
-                templateResult: function(data) {
-                    if (data.loading) {
-                        return data.text;
-                    }
-
-                    var $result = $('<span></span>');
-                    $result.text(data.text);
-                    return $result;
-                }
-            }).on('change', function() {
-
-            });
-
-            jQuery.validator.addMethod("extension", function(value, element, param) {
-                if (element.files.length > 0) {
-                    const file = element.files[0];
-                    const fileExtension = file.name.split('.').pop().toLowerCase();
-                    return fileExtension === param.toLowerCase();
-                }
-                return true;
-            }, "Please upload a valid file type.");
-
-            jQuery.validator.addMethod("filesize", function(value, element, param) {
-                if (element.files.length > 0) {
-                    return element.files[0].size <= param;
-                }
-                return true;
-            }, "File size must not exceed {0} bytes.");
-
-            $('#fileUploader').validate({
-                rules: {
-                    xlsx: {
-                        required: true,
-                        extension: 'xlsx'
-                    }
-                },
-                messages: {
-                    xlsx: {
-                        required: "Please select a file",
-                        extension: 'Only .xlsx file is allowed for import'
-                    }
-                },
-                submitHandler: function(form, event) {
-                    event.preventDefault();
-
-                    let formData = new FormData(form);
-
-                    $.ajax({
-                        url: "{{ route('import-assets') }}",
-                        type: 'POST',
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        beforeSend: function() {
-                            $('body').find('.LoaderSec').removeClass('d-none');
-                        },
-                        success: function(response) {
-                            $('body').find('.LoaderSec').addClass('d-none');
-                            if (response.status) {
-                                $('#browser-file').modal('hide');
-                                $('form#fileUploader')[0].reset();
-                                $('.modal-backdrop').remove();
-
-                                Swal.fire('Success', response.message, 'success');
-                                location.reload();
-                            } else {
-                                Swal.fire('Error', response.message, 'error');
-                            }
-                        }
-                    });
-
-                }
-            });
-
-            function getQueryParams() {
-                const params = {};
-                const searchParams = new URLSearchParams(window.location.search);
-                for (const [key, value] of searchParams.entries()) {
-                    params[key] = value;
-                }
-                return params;
-            }
-
-            $('#export-stores').on('click', function() {
-
-                $.ajax({
-                    url: "{{ route('export-assets') }}",
-                    type: 'GET',
-                    cache: false,
-                    xhrFields: {
-                        responseType: 'blob'
-                    },
-                    data: getQueryParams(),
-                    beforeSend: function() {
-                        $('body').find('.LoaderSec').removeClass('d-none');
-                    },
-                    success: function(response) {
-                        var url = window.URL || window.webkitURL;
-                        var objectUrl = url.createObjectURL(response);
-                        var a = $("<a />", {
-                            href: objectUrl,
-                            download: "stores.xlsx"
-                        }).appendTo("body")
-                        a[0].click()
-                        a.remove()
-                    },
-                    complete: function() {
-                        $('body').find('.LoaderSec').addClass('d-none');
-                    }
-                });
-            });
-
-            // Select2
-
-            $('#state').select2({
-                placeholder: 'Select State',
-                allowClear: true,
-                width: '100%',
-                theme: 'classic',
-                ajax: {
-                    url: "{{ route('state-list') }}",
-                    type: "POST",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            searchQuery: params.term,
-                            page: params.page || 1,
-                            _token: "{{ csrf_token() }}"
-                        };
-                    },
-                    processResults: function(data, params) {
-                        params.page = params.page || 1;
-
-                        return {
-                            results: $.map(data.items, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            }),
-                            pagination: {
-                                more: data.pagination.more
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                templateResult: function(data) {
-                    if (data.loading) {
-                        return data.text;
-                    }
-
-                    var $result = $('<span></span>');
-                    $result.text(data.text);
-                    return $result;
-                }
-            }).on('change', function() {
-                $('#city').val(null).trigger('change');
-            });
-
-            $('#city').select2({
-                placeholder: 'Select City',
-                allowClear: true,
-                width: '100%',
-                theme: 'classic',
-                ajax: {
-                    url: "{{ route('city-list') }}",
-                    type: "POST",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            searchQuery: params.term,
-                            page: params.page || 1,
-                            _token: "{{ csrf_token() }}",
-                            state: function() {
-                                return $('#state option:selected').val();
-                            }
-                        };
-                    },
-                    processResults: function(data, params) {
-                        params.page = params.page || 1;
-
-                        return {
-                            results: $.map(data.items, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            }),
-                            pagination: {
-                                more: data.pagination.more
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                templateResult: function(data) {
-                    if (data.loading) {
-                        return data.text;
-                    }
-
-                    var $result = $('<span></span>');
-                    $result.text(data.text);
-                    return $result;
-                }
-            });
-
-            $('#dom_id').select2({
-                placeholder: 'Select User',
-                allowClear: true,
-                width: '100%',
-                theme: 'classic',
-                ajax: {
-                    url: "{{ route('users-list') }}",
-                    type: "POST",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            searchQuery: params.term,
-                            page: params.page || 1,
-                            _token: "{{ csrf_token() }}",
-                            roles: "{{ implode(',', [Helper::$roles['divisional-operations-manager']]) }}"
-                        };
-                    },
-                    processResults: function(data, params) {
-                        params.page = params.page || 1;
-
-                        return {
-                            results: $.map(data.items, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            }),
-                            pagination: {
-                                more: data.pagination.more
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                templateResult: function(data) {
+                templateResult: function (data) {
                     if (data.loading) {
                         return data.text;
                     }
@@ -1475,27 +668,29 @@
 
             let assetRowIndex = 0;
 
-            $('#add-asset-btn').on('click', function() {
+            $('#add-asset-btn').on('click', function () {
                 let html = `
-                <tr id="asset-row-${assetRowIndex}">
-                    <td>
-                        <select name="assets[${assetRowIndex}][asset_id]" class="form-control asset-select" required></select>
-                    </td>
-                    <td>
-                        <input type="text" name="assets[${assetRowIndex}][description]" class="form-control" placeholder="Description (Optional)">
-                    </td>
-                    <td>
-                        <button type="button" class="ofs-btn ofs-btn-danger remove-asset-btn" data-row-id="${assetRowIndex}"><i class="bi bi-trash"></i> </button>
-                    </td>
-                </tr>
-            `;
+                    <tr id="asset-row-${assetRowIndex}" class="border-b border-gray-50">
+                        <td class="p-2">
+                            <select name="assets[${assetRowIndex}][asset_id]" class="w-full" required></select>
+                        </td>
+                        <td class="p-2">
+                            <input type="text" name="assets[${assetRowIndex}][description]" class="w-full h-[42px] px-3 text-sm border border-[#e5e7eb] rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Description (Optional)">
+                        </td>
+                        <td class="p-2 text-center">
+                            <button type="button" class="w-[38px] h-[38px] inline-flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors remove-asset-btn" data-row-id="${assetRowIndex}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
                 $('#assets-table tbody').append(html);
 
                 initializeAssetSelect2(assetRowIndex);
                 assetRowIndex++;
             });
 
-            $(document).on('click', '.remove-asset-btn', function() {
+            $(document).on('click', '.remove-asset-btn', function () {
                 let rowId = $(this).data('row-id');
                 $('#asset-row-' + rowId).remove();
             });
@@ -1511,7 +706,7 @@
                         type: "POST",
                         dataType: 'json',
                         delay: 250,
-                        data: function(params) {
+                        data: function (params) {
                             return {
                                 searchQuery: params.term,
                                 page: params.page || 1,
@@ -1520,10 +715,10 @@
                                 assets: 1
                             };
                         },
-                        processResults: function(data, params) {
+                        processResults: function (data, params) {
                             params.page = params.page || 1;
                             return {
-                                results: $.map(data.items, function(item) {
+                                results: $.map(data.items, function (item) {
                                     return {
                                         id: item.id,
                                         text: item.text
@@ -1538,6 +733,24 @@
                     }
                 });
             }
+
+            // Re-bind validation scripts...
+            jQuery.validator.addMethod("extension", function (value, element, param) {
+                if (element.files.length > 0) {
+                    const file = element.files[0];
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    return fileExtension === param.toLowerCase();
+                }
+                return true;
+            }, "Please upload a valid file type.");
+
+            jQuery.validator.addMethod("filesize", function (value, element, param) {
+                if (element.files.length > 0) {
+                    return element.files[0].size <= param;
+                }
+                return true;
+            }, "File size must not exceed {0} bytes.");
+
         });
     </script>
 @endpush
