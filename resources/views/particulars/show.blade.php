@@ -1,37 +1,52 @@
 @extends('layouts.app-master')
 
-@section('content')
-    <div class="bg-light p-4 rounded">
-        <h1>{{ $page_title }}</h1>
-        <div class="mt-2">
-            @include('layouts.partials.messages')
-        </div>
+@push('css')
+    <script src="{{ asset('assets/js/tailwindcss-cdn.js') }}"></script>
+    <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['DynamicAppFont', 'sans-serif'] } } } }</script>
+    <style>
+        body {
+            font-family: 'DynamicAppFont', sans-serif !important;
+        }
+    </style>
+@endpush
 
-        <div class="mt-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        <div>{{ $particular->name }}</div>
+@section('content')
+    <div class="px-6 pt-6 pb-10">
+        <div class="max-w-3xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-800">View Particular</h2>
+                    <p class="text-sm text-gray-400 mt-0.5">Read-only view of this particular.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('particulars.index') }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors shadow-sm text-decoration-none">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-2">
+                    <i class="bi bi-list-check text-gray-400 text-lg"></i>
+                    <h3 class="text-sm font-semibold text-gray-800 m-0">Particular Details</h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="rounded-lg border border-gray-100 bg-gray-50/30 p-5">
+                        <span class="block text-xs font-semibold text-gray-400 tracking-wide uppercase mb-1">Name</span>
+                        <span class="block text-lg text-gray-800 font-medium">{{ $particular->name }}</span>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Department</label>
-                        <div>{{ optional(\App\Models\Department::withTrashed()->find($particular->department_id))->name ?? '-' }}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50/30 p-5">
+                        <span
+                            class="block text-xs font-semibold text-gray-400 tracking-wide uppercase mb-1">Department</span>
+                        <span
+                            class="block text-sm text-gray-700">{{ optional(\App\Models\Department::withTrashed()->find($particular->department_id))->name ?? '-' }}</span>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <div>{{ $particular->status ? 'Active' : 'InActive' }}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50/30 p-5">
+                        <span class="block text-xs font-semibold text-gray-400 tracking-wide uppercase mb-1">Status</span>
+                        <span class="block text-sm text-gray-700">{{ $particular->status ? 'Active' : 'InActive' }}</span>
                     </div>
                 </div>
             </div>
-
-            <a href="{{ route('particulars.index') }}" class="btn btn-default mt-3">Back</a>
         </div>
     </div>
 @endsection
-
-@push('js')
-<script type="text/javascript">
-
-</script>
-@endpush
