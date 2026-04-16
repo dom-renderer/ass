@@ -1072,20 +1072,20 @@
 
     /* Force theme colors in key UI areas */
     .main-header {
-        /* background: var(--app-primary-bg) !important; */
+        background: var(--app-primary-bg) !important;
     }
 
     .main-header ul.navbar-nav li.nav-item a.nav-link span.line {
-        background: black!important;
+        background: var(--app-primary-text) !important;
     }
 
     .main-header ul.navbar-nav li.header-title a.nav-link {
-        /* color: var(--app-primary-text) !important; */
+        color: var(--app-primary-text) !important;
     }
 
     .main-header .user-account p,
     .main-header .user-account span {
-        /* color: var(--app-primary-text) !important; */
+        color: var(--app-primary-text) !important;
     }
 
     /* Sidebar inherits bg/text via CSS variables */
