@@ -3,6 +3,7 @@
   @php
     $authAppName = !empty(optional($appConfig)->app_name) ? $appConfig->app_name : APP_NAME;
     $authFavicon = !empty(optional($appConfig)->favicon_url) ? $appConfig->favicon_url : null;
+    $authLogo = !empty(optional($appConfig)->logo_url) ? $appConfig->logo_url : null;
   @endphp
   <head>
     <meta charset="utf-8">

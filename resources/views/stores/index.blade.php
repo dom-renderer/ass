@@ -97,7 +97,7 @@
                     Export
                 </button>
                 <a href="{{ route('stores.create') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                     <i class="bi bi-plus-lg"></i>
                     Add Location
                 </a>
@@ -430,7 +430,7 @@
                         Cancel
                     </button>
                     <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm inline-flex items-center gap-2">
+                        class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg transition-colors shadow-sm inline-flex items-center gap-2">
                         <i class="bi bi-upload"></i> Process Import
                     </button>
                 </div>

@@ -759,6 +759,10 @@
         margin-left: 10px;
     }
 
+    .dataTables_length > label > select {
+        width : 60px!important;
+    }    
+
     .fursa-table table td {
         font-weight: 300;
     }
@@ -1094,6 +1098,7 @@
     }
 
     /* Primary buttons everywhere */
+    .bg-primary,
     .btn-primary,
     button.btn-blue,
     button.btn-fursa-form-submit {

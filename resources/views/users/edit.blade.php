@@ -194,7 +194,7 @@
                     Cancel
                 </a>
                 <button type="submit"
-                    class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                    class="inline-flex items-center gap-2 px-5 py-2 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                     <i class="bi bi-save"></i> Save Changes
                 </button>
             </div>

@@ -37,7 +37,7 @@
                 <a href="{{ route('departments.index') }}" class="px-4 py-2 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors shadow-sm text-decoration-none">
                     Cancel
                 </a>
-                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm cursor-pointer">
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm cursor-pointer">
                     <i class="bi bi-save"></i> Save
                 </button>
             </div>

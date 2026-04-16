@@ -176,7 +176,7 @@
                 @endif
                 @if(auth()->user()->can('users.create'))
                     <a href="{{ route('users.create') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                         <i class="bi bi-plus-lg"></i>
                         Add User
                     </a>
@@ -319,7 +319,7 @@
                         Close
                     </button>
                     <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm inline-flex items-center gap-2">
+                        class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg transition-colors shadow-sm inline-flex items-center gap-2">
                         <i class="bi bi-upload"></i> Upload Users
                     </button>
                 </div>

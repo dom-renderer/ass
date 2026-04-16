@@ -564,7 +564,7 @@
             {{-- ── Submit ── --}}
             <div class="flex justify-end pb-4">
                 <button type="submit"
-                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                     <i class="bi bi-plus-circle"></i>
                     Update
                 </button>
@@ -606,7 +606,7 @@
                         Close
                     </button>
                     <button type="button" id="saveLocation"
-                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">
+                        class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg transition-colors shadow-sm">
                         Save Location
                     </button>
                 </div>

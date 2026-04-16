@@ -37,7 +37,7 @@
                 @endphp
                 @if(!$trashedUser->trashed())
                     <a href="{{ route('users.edit', $user->id) }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm text-decoration-none">
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm text-decoration-none">
                         <i class="bi bi-pencil"></i> Edit Profile
                     </a>
                 @endif

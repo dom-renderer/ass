@@ -11,10 +11,7 @@
     }
 
     .logo-css {
-        width: 116px!important;
         height: 102px!important;
-        border-radius: 6px;
-        border: 7px solid white;
     }
 </style>
 <div class="login-wrapper">
@@ -22,7 +19,7 @@
         <div class="row" style="height:100%;">
             <div class="col-12">
                 <div class="logn-box" style="height:100%;">
-                    <div class="logo"><a href="#" class="brand-link"><img src="{!! url('assets/logo.webp') !!}" alt="{{ APP_NAME }} Logo" class="img-logo logo-css"></a></div>
+                    <div class="logo"><a href="#" class="brand-link"><img src="{{ $appConfig->logo_url }}" alt="{{ APP_NAME }} Logo" class="img-logo logo-css"></a></div>
                     <div class="login-form fursa-form">
                         <h1 class="login-title mb-15">RESET PASSWORD</h1>
                         @include('layouts.partials.messages')

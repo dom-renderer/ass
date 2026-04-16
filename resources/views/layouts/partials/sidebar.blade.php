@@ -103,9 +103,9 @@
                             <li class="nav-item"><a href="{{ route('stores.index') }}" class="nav-link"> Locations </a></li>
                         @endif
         
-                        @if(auth()->user()->can('corporate-office.index'))
+                        {{-- @if(auth()->user()->can('corporate-office.index'))
                             <li class="nav-item"><a href="{{ route('corporate-office.index') }}" class="nav-link"> Corporate Offices </a></li>
-                        @endif
+                        @endif --}}
         
                         @if(auth()->user()->can('departments.index'))
                             <li class="nav-item"><a href="{{ route('departments.index') }}" class="nav-link"> Departments </a></li>

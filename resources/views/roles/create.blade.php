@@ -110,7 +110,7 @@
                         Cancel
                     </a>
                     <button type="submit"
-                        class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                        class="inline-flex items-center gap-2 px-5 py-2 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                         <i class="bi bi-save"></i> Save Role
                     </button>
                 </div>
@@ -120,7 +120,7 @@
             <div class="space-y-6">
 
                 {{-- Name Card --}}
-                <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden w-full lg:w-1/2">
+                <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden w-full">
                     <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-2">
                         <i class="bi bi-card-text text-gray-400"></i>
                         <h3 class="text-sm font-semibold text-gray-800 m-0">Role Details</h3>

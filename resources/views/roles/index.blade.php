@@ -93,7 +93,7 @@
             <div class="flex items-center mt-4 md:mt-0">
                 @if (auth()->user()->can('roles.create'))
                     <a href="{{ route('roles.create') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm text-decoration-none">
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm text-decoration-none">
                         <i class="bi bi-plus-lg"></i> Add Role
                     </a>
                 @endif
@@ -110,7 +110,7 @@
                 <div class="bg-white rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2 bg-gray-50/50">
                         <i class="bi bi-shield-lock text-gray-400 text-lg"></i>
-                        <h3 class="text-sm font-semibold text-gray-800 m-0">System Roles Directory</h3>
+                        <h3 class="text-sm font-semibold text-gray-800 m-0">System Roles </h3>
                     </div>
                     <div class="p-0 table-responsive">
                         <table class="table table-striped w-100 m-0" id="role-table" cellspacing="0">

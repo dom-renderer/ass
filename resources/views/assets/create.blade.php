@@ -461,7 +461,7 @@
             {{-- ── Submit ── --}}
             <div class="flex justify-end pb-4 mt-2">
                 <button type="submit"
-                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                     <i class="bi bi-check2-circle"></i>
                     Save Asset
                 </button>
